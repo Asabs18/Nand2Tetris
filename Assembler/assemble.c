@@ -6,6 +6,7 @@
 #include "symbol.h"
 #include "_symbol.h"
 
+//defined values for below
 #define MAXSIZE 30
 #define EMPTYVAL 0
 
