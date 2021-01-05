@@ -40,32 +40,4 @@ int main(int argc, char** argv) {
 	fclose(outputFp);
 	fclose(Rewindfp);
 	//destroyCommand(currCommand);
-	/*
-		//First pass
-		Parse command line
-		create a symbol table
-		add all predef symbols to the table
-		open input file
-		while(not end of file):
-			read a line
-			strip comments and whitespace
-			parse the curr instruction
-				- if currLine is L instruction parse the line
-				- add the label to the symbol Table with value(curr program counter)
-		Rewind input file
-
-		//Second Pass
-		open output file
-		while(not end of file):
-			read a line
-			strip comments and whitespace
-			parse the curr instruction
-				- Determine A or C instruction
-				- Parse the curr instruction based on type
-			gen code based on parsed instruction
-			write code to the output file
-
-		close i/o files
-		free symbol table and curr command memory
-		*/
 }
