@@ -6,71 +6,66 @@
 ///There are currently two forms of pseudo code for this main loop show below///
 
 int main(int argc, char** argv) {
-	/*
-	//?????????????????????//
-	//Read in the necessary items from the command line i.e the i/o files
-	Parse Command Line
-	//Creates the current command, this command is blank at the current point in time
-	currCommand = createCommand(file);
-	//createSymbolTable will create a new blank table and fill it in with the 23 predef values. 
-	symbolTable_t table = createSymbolTable();
-	//pass refers to the current pass of the command line. This var is more visual than functional
+	const char* fileName = "input/Pong/PongL.asm";
+	const char* outputFileName = "output/output.hack";
 	int pass = 1;
-	//this loop will call the function areThereMoreCommands that returns true if there are more commands and false otherwise
-	while(areThereMoreCommands){
-	//advance will find the next valid command in the file ignoring whitespace and comments and commands its not looking for(L commands) and will fill the currCommand with the new line and its attributes
-		currCommand = advance(currCommand, pass);
-		//parseLInstruction will take the current L instruction and check if its in the symbol table if so it is ignored, if not it is added with the next available memory address.
-		parseLInstruction(table, currCommand);
+	symbolTable_p symbTable = createSymbolTable();
+	int values[] = { 16384, 24576, 0, 1, 2, 3, 4 };
+	symbTable = addPredefSymbs(symbTable, values);
+	FILE* fp = openFile(fileName);
+	int lineNumber = 0;
+	command_t* currCommand = malloc(sizeof(command_t));
+	while (areThereMoreCommands(fp)) {
+		lineNumber++;
+		currCommand = advancePass1(currCommand, fp);
+		if (strcmp(currCommand->command, "//ENDOFFILE") == 0) {
+			break;
+		}
+		parse(currCommand, pass, symbTable);
 	}
+	fclose(fp);
+	FILE* Rewindfp = openFile(fileName);
+	FILE* outputFp = openOutputFile(outputFileName);
+	lineNumber = 0;
 	pass = 2;
-	//go back to the start of the file for the second pass
-	resetFile
-	//this loop is ran again to account for the second pass 
-	while(areThereMoreCommands){
-	//advance will now find the valid A and C commands and will ignore everything else in the file
-		advance(currCommand, pass);
-		//checks to see if the currCommand is A so it knows which parse function to call
-		if(currCommand.type == A){
-			parseAInctruction(table, currCommand);
+	while (areThereMoreCommands(Rewindfp)) {
+		lineNumber++;
+		currCommand = advancePass2(currCommand, Rewindfp);
+		if (currCommand->type == N) {
+			break;
 		}
-		//otherwise the command must be a C command because advance() outputs are binary
-		else{
-			parseCInstruction(currCommand);
-		}
+		Instruction_t instruct = parse(currCommand, pass, symbTable);
+		GenerateCode(&instruct, outputFp);
 	}
-	write to output file
-	//frees all allocated memory that was created for this program
-	free(currCommand, Symbol Table)
-	//??????????????????????????//
-	*/
-
+	fclose(outputFp);
+	fclose(Rewindfp);
+	//destroyCommand(currCommand);
 	/*
-	//First pass
-	Parse command line
-	create a symbol table
-	add all predef symbols to the table
-	open input file
-	while(not end of file):
-		read a line
-		strip comments and whitespace
-		parse the curr instruction
-			- if currLine is L instruction parse the line
-			- add the label to the symbol Table with value(curr program counter)
-	Rewind input file
+		//First pass
+		Parse command line
+		create a symbol table
+		add all predef symbols to the table
+		open input file
+		while(not end of file):
+			read a line
+			strip comments and whitespace
+			parse the curr instruction
+				- if currLine is L instruction parse the line
+				- add the label to the symbol Table with value(curr program counter)
+		Rewind input file
 
-	//Second Pass
-	open output file
-	while(not end of file):
-		read a line
-		strip comments and whitespace
-		parse the curr instruction
-			- Determine A or C instruction
-			- Parse the curr instruction based on type
-		gen code based on parsed instruction
-		write code to the output file
+		//Second Pass
+		open output file
+		while(not end of file):
+			read a line
+			strip comments and whitespace
+			parse the curr instruction
+				- Determine A or C instruction
+				- Parse the curr instruction based on type
+			gen code based on parsed instruction
+			write code to the output file
 
-	close i/o files
-	free symbol table and curr command memory
-	*/
+		close i/o files
+		free symbol table and curr command memory
+		*/
 }

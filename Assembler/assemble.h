@@ -22,7 +22,7 @@
 #define JUMPOPTIOND 9
 #define REGSTRLEN 5
 
-typedef enum commandType_t { A, C, L } commandType_t;
+typedef enum commandType_t { A, C, L, N } commandType_t;
 //plus/minus refers to one
 //All possible commands for cmp dst jmp respectively //TODO: add high order bit
 typedef enum comp_e { nullcomp = 0x0, zero = 0xA80, one = 0xFC0, negOne = 0xE80, Dcomp = 0x300, Acomp = 0xC00, notD = 340, notA = 0xC40, negD = 0x3C0, negA = 0xCC0, Dplus = 0x7C0, Aplus = 0xDC0, Dminus = 0x380, Aminus = 0xC80, DplusA = 0x80, DminusA = 0x4C0, AminusD = 0x1C0, DandA = 0x0, DorA = 0x540, Mcomp = 0x1C00, notM = 0x1C40, negM = 0x1CC0, Mplus = 0x1DC0, Mminus = 0x1C80, DplusM = 0x1080, DminusM = 0x14C0, MminusD = 0x11C0, DandM = 0x0, DorM = 0x1540, numComps = 29 } comp_t; //6 places

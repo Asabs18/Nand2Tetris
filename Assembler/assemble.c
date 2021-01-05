@@ -8,7 +8,7 @@
 #include "_symbol.h"
 
 //defined values for below
-#define MAXSIZE 30
+#define MAXSIZE 70
 #define EMPTYVAL 0
 
 ///this file contains all function declarations that have to do with parsing or handling the command/// 
@@ -87,7 +87,6 @@ char* stripWhiteSpace(char* command) {
 command_t* advancePass1(command_t* currCommand, FILE* readFrom) {
 	//runs until the return statement is hit in the loop
 	currCommand = updateCommand(currCommand, readFrom);
-	currCommand->command = stripWhiteSpace(currCommand->command);
 	while (true) {
 		//if the current line is a comment get the next line
 		while (currCommand->command == NULL || strcmp(currCommand->command, "//skip") == 0) {
@@ -101,16 +100,19 @@ command_t* advancePass1(command_t* currCommand, FILE* readFrom) {
 		else {
 			currCommand = updateCommand(currCommand, readFrom);
 		}
+		if (areThereMoreCommands(readFrom) == false) {
+			currCommand->type = N;
+			return currCommand;
+		}
 	}
 }
 
 //moves the current command to the next valid line
 command_t* advancePass2(command_t* currCommand, FILE* readFrom) {
 	currCommand = updateCommand(currCommand, readFrom);
-	currCommand->command = stripWhiteSpace(currCommand->command);
 	while (true) {
 		//get the next line if the current line is a comment
-		while (currCommand->command == NULL || strcmp(currCommand->command, "//skip") == 0) {
+		while (currCommand->command == NULL || strcmp(currCommand->command, "//skip") == 0 || strcmp(currCommand->command, "\n") == 0) {
 			currCommand = updateCommand(currCommand, readFrom);
 		}
 		//return everything that is not an L command
@@ -121,6 +123,10 @@ command_t* advancePass2(command_t* currCommand, FILE* readFrom) {
 		else {
 			currCommand = updateCommand(currCommand, readFrom);
 		}
+		if (areThereMoreCommands(readFrom) == false) {
+			currCommand->type = N;
+			return currCommand;
+		}
 	}
 }
 
@@ -128,6 +134,7 @@ command_t* advancePass2(command_t* currCommand, FILE* readFrom) {
 command_t* updateCommand(command_t* currCommand, FILE* readFrom) {
 	//gets a new command from the read file
 	currCommand->command = createCommand(readFrom);
+	currCommand->command = stripWhiteSpace(currCommand->command);
 	//gets the length of the command
 	int cmdLen = strlen(currCommand->command);
 	//updates the line number
@@ -172,7 +179,7 @@ command_t* commandType(command_t* currCommand) {
 bool areThereMoreCommands(FILE* readFrom) { //TODO: Switch to ternary operator
 	bool isFileEnd = false;
 	//feof() returns 0 is there are still lines left in a file
-	if (feof(readFrom) != 0) {
+	if (feof(readFrom) == 0) {
 		isFileEnd = true;
 	}
 	return isFileEnd;
@@ -412,6 +419,9 @@ int parseAInstruction(command_t* currCommand, symbolTable_p symbolTable) {
 Instruction_t parse(command_t* currCommand, int pass, symbolTable_p table) {
 	cInstruct_t temp = { nullcomp, nulldest, nulljump };
 	Instruction_t cmdVal = { temp, 0 };
+	if (currCommand->command[strlen(currCommand->command) - 1] == '\n') {
+		currCommand->command[strlen(currCommand->command) - 1] = '\0';
+	}
 	if (pass == 1) {
 		if (currCommand->type == L) {
 			parseLInstruction(currCommand, table);
