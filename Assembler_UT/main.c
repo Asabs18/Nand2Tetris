@@ -14,7 +14,6 @@ const MunitSuite Parse_C_test_suite[] = {
 	{ NULL }
 };
 
-//TODO: check ut_hash
 //The ACL test suite calls the assembleCheck Tests
 const MunitSuite Assembler_test_suite[] = {
 	{ munit_ex_register_sub_suite(symbolTable , NULL) },
@@ -33,7 +32,7 @@ const MunitSuite root_test_suite = {
 int main(int argc, char** argv) {
 	initialize_debugging();
 	//int* test = malloc(sizeof(int)); //FOR SOME REASON MEM LEAKS ONLY SHOW WHEN UNCOMMENTED
-	int output =  munit_suite_main(&root_test_suite, NULL, argc, argv);
+	int output = munit_suite_main(&root_test_suite, NULL, argc, argv);
 	//terminate_debugging(); //TODO: Fix memory leaks
 	return output;
 }

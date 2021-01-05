@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include "munit.h"
 #include "assemble.h"
 #include "symbol.h"
 #include "_symbol.h"
@@ -225,7 +226,7 @@ cInstruct_t dest(command_t* currCommand, cInstruct_t instruction, int i) {
 	dest[index] = '\0';
 	if (getVal(destTable, dest) != NULL) {
 		symbol_p output = getVal(destTable, dest);
-		munit_assert(output != NULL);
+		assert(output != NULL);
 		instruction.dest = *((int*)output->value);
 	}
 
