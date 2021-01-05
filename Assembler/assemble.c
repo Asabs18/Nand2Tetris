@@ -365,17 +365,17 @@ void parseLInstruction(command_t* currCommand, symbolTable_p table) {
 	assert(currCommand->type == L);
 	char cmd[MAXSIZE];
 	int Cmdlen = strlen(currCommand->command);
-	if (currCommand->command[0] == '(' && currCommand->command[Cmdlen] == ')') {
+	if (currCommand->command[0] == '(' && currCommand->command[Cmdlen - 1] == ')') {
 		for (int i = 1; i < Cmdlen; i++) {
 			cmd[i - 1] = currCommand->command[i];
 		}
-		cmd[Cmdlen] = '\0';
+		cmd[Cmdlen - 2] = '\0';
 	}
 	if (isNum(cmd) == false) {
 		//otherwise check if the string is a valid symbol, if so add to the symbol table and set output to -1
 		if (isStringValidSymbol(cmd)) {
 			if (getVal(table, (const char*)cmd) == NULL) {
-				insert(table, cmd, EMPTYVAL); //TODO: change EMPTYVAL to actual ROM adress
+				insert(table, cmd, &currCommand->lineNumber); //TODO: change EMPTYVAL to actual ROM address
 			}
 		}
 	}
@@ -407,9 +407,12 @@ int parseAInstruction(command_t* currCommand, symbolTable_p symbolTable) {
 		if (isNum(cmd)) {
 			val = atoi(cmd);
 		}
-		else {
+		else if(getVal(symbolTable, (const char*)cmd) != NULL){
 			symbol_p symb = getVal(symbolTable, (const char*)cmd);
 			val = *((int*)symb->value);
+		}
+		else if (isStringValidSymbol((const char*)cmd) == true) {
+			insert(symbolTable, (const char*)cmd, &currCommand->lineNumber);
 		}
 	}
 	return val;
@@ -441,10 +444,6 @@ Instruction_t parse(command_t* currCommand, int pass, symbolTable_p table) {
 //Adds predefined symbols to the symbol table
 symbolTable_p addPredefSymbs(symbolTable_p table, int values[]) {
 	char name[REGSTRLEN];
-	for (int i = 0; i < 16; i++) {
-		sprintf_s(name, REGSTRLEN, "R%d", i);
-		insert(table, name, &i);
-	}
 	insert(table, "SCREEN", &values[0]);
 	insert(table, "KBD", &values[1]);
 	insert(table, "SP", &values[2]);
@@ -452,6 +451,22 @@ symbolTable_p addPredefSymbs(symbolTable_p table, int values[]) {
 	insert(table, "ARG", &values[4]);
 	insert(table, "THIS", &values[5]);
 	insert(table, "THAT", &values[6]);
+	insert(table, "R0", &values[7]);
+	insert(table, "R1", &values[8]);
+	insert(table, "R2", &values[9]);
+	insert(table, "R3", &values[10]);
+	insert(table, "R4", &values[11]);
+	insert(table, "R5", &values[12]);
+	insert(table, "R6", &values[13]);
+	insert(table, "R7", &values[14]);
+	insert(table, "R8", &values[15]);
+	insert(table, "R9", &values[6]);
+	insert(table, "R10", &values[17]);
+	insert(table, "R11", &values[18]);
+	insert(table, "R12", &values[19]);
+	insert(table, "R13", &values[20]);
+	insert(table, "R14", &values[21]);
+	insert(table, "R15", &values[22]);
 	return table;
 }
 

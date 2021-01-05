@@ -19,7 +19,7 @@ void destroySymbol(symbol_p symb) {
 }
 
 //adds an element to the symbol table
-bool insert(symbolTable_p table, const char * key, void* value) {
+bool insert(symbolTable_p table, const char* key, void* value) {
 	//Checks if the asked for symbol is already in the table
 	bool output = false;
 	symbol_t* symb = (symbol_t*)-1;
@@ -38,7 +38,7 @@ bool insert(symbolTable_p table, const char * key, void* value) {
 }
 
 //prints the whole table for debugging purposes 
-bool printHash(symbolTable_p table, FILE* output, const char * key) {
+bool printHash(symbolTable_p table, FILE* output, const char* key) {
 	symbol_p symb = getVal(table, key);
 	int val = *((int*)symb->value);
 	fprintf(output, "Your Key is %s. Your Value is %d (%x)\n", symb->key, val, val);
@@ -65,29 +65,29 @@ bool isStringValidSymbol(const char* string) {
 	//Sets return value to true
 	bool isValid = true;
 	//Checks if the first digit is a number and if so returns false
-	if(isdigit(string[0])){
+	if (isdigit(string[0])) {
 		isValid = false;
 	}
-	else{
+	else {
 		//Enters a for loop that looks at each part of string
 		for (size_t i = 0; i < strlen(string); i++) {
-				//Checks if each char in string is one of the accepted values
-				if(isalnum(string[i]) || string[i] == '_' || string[i] == '$' || string[i] == '.' || string[i] == ':' || isdigit(string[i])){
-					//if so continues
-					continue;
-				}
-				else {
-					//Otherwise returns false
-					isValid = false;
-					break;
-				}
+			//Checks if each char in string is one of the accepted values
+			if (isalnum(string[i]) || string[i] == '_' || string[i] == '$' || string[i] == '.' || string[i] == ':' || isdigit(string[i])) {
+				//if so continues
+				continue;
+			}
+			else {
+				//Otherwise returns false
+				isValid = false;
+				break;
+			}
 		}
 	}
 	//Return the value that has been possibly changed through the function
 	return isValid;
 }
 //Creates an empty symbol
-symbol_p createSymbol(const char * key) {
+symbol_p createSymbol(const char* key) {
 	symbol_t* symbol = malloc(sizeof(symbol_t));
 	assert(symbol);
 	symbol->key = key;
@@ -100,7 +100,8 @@ symbol_p getVal(symbolTable_p table, const char* key) {
 		return NULL;
 	}
 	symbol_p output = createSymbol(key);
-	HASH_FIND_STR(table->table, key, output); //STRSTRSTRSTRSTR
+	HASH_FIND_STR(table->table, key, output);
+	//assert(output != NULL);
 	return output;
 }
 //sets the value in the symbol
