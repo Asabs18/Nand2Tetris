@@ -87,7 +87,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\..\C Add Ons\munit-master;..\Assembler;..\..\..\C Add Ons\uthash-master\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\munit-master;..\Assembler;..\..\uthash-master\src</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>

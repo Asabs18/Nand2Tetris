@@ -104,7 +104,7 @@ advanceReturnsValidCommand(const MunitParameter params[], void* data) {
 		return EXIT_FAILURE;
 	}
 	char* command = createCommand(fp);
-	command_t currCommand = { A, 0, command };
+	command_t currCommand = { A, command };
 
 	//Act
 	command_t* answer = advancePass2(&currCommand, fp);
@@ -126,7 +126,7 @@ advanceReturnsLabelPassOne(const MunitParameter params[], void* data) {
 		return EXIT_FAILURE;
 	}
 	char* command = "Empty";
-	command_t currCommand = { A, 0, command };
+	command_t currCommand = { A, command };
 
 	//Act
 	command_t* answer = advancePass1(&currCommand, fp);
@@ -148,7 +148,7 @@ advanceReturnsNotLabelPassTwo(const MunitParameter params[], void* data) {
 		return EXIT_FAILURE;
 	}
 	char* command = "Empty";
-	command_t currCommand = { A, 0, command };
+	command_t currCommand = { A, command };
 
 	//Act
 	command_t* answer = advancePass2(&currCommand, fp);
@@ -170,7 +170,7 @@ advanceFindsSecondLabel(const MunitParameter params[], void* data) {
 		return EXIT_FAILURE;
 	}
 	char* command = "Empty";
-	command_t currCommand = { A, 0, command };
+	command_t currCommand = { A, command };
 
 	//Act
 	command_t* answer = advancePass1(&currCommand, fp);
@@ -189,7 +189,7 @@ static MunitResult
 commandTypeReturnsLCommand(const MunitParameter params[], void* data) {
 	//Arrange
 	char* command = "(hello)";
-	command_t currCommand = {A, 0, command};
+	command_t currCommand = { A, command };
 
 	//Act
 	command_t* type = commandType(&currCommand);
@@ -204,7 +204,7 @@ static MunitResult
 commandTypeReturnsACommand(const MunitParameter params[], void* data) {
 	//Arrange
 	char* command = "@hello";
-	command_t currCommand = { A, 0, command };
+	command_t currCommand = { A, command };
 
 	//Act
 	command_t* type = commandType(&currCommand);
@@ -221,7 +221,7 @@ static MunitResult
 commandTypeReturnsCCommand(const MunitParameter params[], void* data) {
 	//Arrange
 	char* command = "hello";
-	command_t currCommand = { A, 0, command };
+	command_t currCommand = { A, command };
 
 	//Act
 	command_t* type = commandType(&currCommand);

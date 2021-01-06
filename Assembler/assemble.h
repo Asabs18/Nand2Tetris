@@ -32,7 +32,6 @@ typedef enum jump_e { nulljump = 0x0, JGT = 0x1, JEQ = 0x2, JGE = 0x3, JLT = 0x4
 //Data structure that represents a given assembly language command
 typedef struct {
 	commandType_t type; // A, C or L command
-	int lineNumber; // the current line
 	char* command; // string of the read in command
 }command_t;
 
@@ -48,6 +47,10 @@ typedef struct {
 	int A;
 }Instruction_t;
 
+typedef struct {
+	command_t* command;
+	int addresses;
+}AR_t;
 
 ///----------------SYMBOL--TABLE--HELPER--FUNCTIONS----------------///
 //Adds all predef symbols to general symbol table
@@ -70,7 +73,7 @@ bool areThereMoreCommands(FILE* readFrom);
 
 ///----------------TOKENIZER--------------///
 //Moves to the next line in a file, different functions for each pass
-command_t* advancePass1(command_t* currCommand, FILE* readFrom);
+AR_t* advancePass1(command_t* currCommand, FILE* readFrom);
 command_t* advancePass2(command_t* currCommand, FILE* readFrom);
 //Gets the command type of a command_t->command(char*)
 command_t* commandType(command_t* currCommand);
@@ -95,11 +98,11 @@ cInstruct_t comp(command_t* currCommand, cInstruct_t instruction);
 //finds and returns the value of the jump part of the C-Command
 cInstruct_t jump(command_t* currCommand, cInstruct_t instruction, int i);
 //Calls the Parse A, C and L instructions based on Pass and command type
-Instruction_t parse(command_t* currCommand, int pass, symbolTable_p table);
+Instruction_t parse(command_t* currCommand, int pass, symbolTable_p table, int memAddress);
 //Parses the A instructions
-int parseAInstruction(command_t* currCommand, symbolTable_p symbolTable);
+int parseAInstruction(command_t* currCommand, symbolTable_p symbolTable, int memAddress);
 //Parses the L Instructions
-void parseLInstruction(command_t* currCommand, symbolTable_p table);
+bool parseLInstruction(command_t* currCommand, symbolTable_p table, int memAddress);
 
 ///--------------CODE-GENERATOR------------///
 //Overall wrapper function that takes a command(A or C) and adds its correct binary output to a output.hack file

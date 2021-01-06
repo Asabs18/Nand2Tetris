@@ -130,14 +130,14 @@ static MunitResult
 IdentifiesCCommandCorrectly(const MunitParameter params[], void* data) { //TODO: Fix cCommand
 	//Arrange
 	char* command = "M=D;JGT";
-	command_t currCommand = { C, 10, command };
+	command_t currCommand = { C, command };
 	symbolTable_p table = createSymbolTable();
 	int values[] = { 16384, 24576, 0, 1, 2, 3, 4 };
 	table = addPredefSymbs(table, values);
 	int pass = 2;
 
 	//Act
-	Instruction_t instruction = parse(&currCommand, pass, table);
+	Instruction_t instruction = parse(&currCommand, pass, table, 10);
 
 	//Assert
 	munit_assert(instruction.C.comp != nullcomp && instruction.C.dest != nulldest && instruction.C.jump != nulljump);
@@ -148,14 +148,14 @@ static MunitResult
 IdentifiesACommandCorrectly(const MunitParameter params[], void* data) {
 	//Arrange
 	char* command = "@10";
-	command_t currCommand = { A, 10, command };
+	command_t currCommand = { A, command };
 	symbolTable_p table = createSymbolTable();
 	int values[] = { 16384, 24576, 0, 1, 2, 3, 4 };
 	table = addPredefSymbs(table, values);
 	int pass = 2;
 
 	//Act
-	Instruction_t instruction = parse(&currCommand, pass, table);
+	Instruction_t instruction = parse(&currCommand, pass, table, 10);
 
 	//Assert
 	munit_assert(instruction.A != 0);
@@ -166,14 +166,14 @@ static MunitResult
 IdentifiesLCommandCorrectly(const MunitParameter params[], void* data) {
 	//Arrange
 	char* command = "(LABEL)";
-	command_t currCommand = { L, 10, command };
+	command_t currCommand = { L, command };
 	symbolTable_p table = createSymbolTable();
 	int values[] = { 16384, 24576, 0, 1, 2, 3, 4 };
 	table = addPredefSymbs(table, values);
 	int pass = 2;
 
 	//Act
-	Instruction_t instruction = parse(&currCommand, pass, table);
+	Instruction_t instruction = parse(&currCommand, pass, table, 10);
 
 	//Assert
 	munit_assert(instruction.C.comp == nullcomp && instruction.A == 0);

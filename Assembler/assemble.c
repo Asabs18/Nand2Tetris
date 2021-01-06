@@ -8,7 +8,7 @@
 #include "_symbol.h"
 
 //defined values for below
-#define MAXSIZE 70
+#define MAXSIZE 100
 #define EMPTYVAL 0
 
 ///this file contains all function declarations that have to do with parsing or handling the command/// 
@@ -23,7 +23,9 @@ FILE* openFile(const char* readFrom) {
 char* createCommand(FILE* file) {
 	static char command[MAXSIZE];
 	//gets the next command and sets it to command
-	fgets(command, sizeof(command), file);
+	if (feof(file) == 0) {
+		fgets(command, sizeof(command), file);
+	}
 	return command;
 }
 
@@ -84,25 +86,29 @@ char* stripWhiteSpace(char* command) {
 }
 
 //moves the current command to the next valid line
-command_t* advancePass1(command_t* currCommand, FILE* readFrom) {
+AR_t* advancePass1(command_t* currCommand, FILE* readFrom) {
+	AR_t* output = malloc(sizeof(AR_t));
+	output->command = malloc(sizeof(command_t));
+	output->addresses = 0;
 	//runs until the return statement is hit in the loop
-	currCommand = updateCommand(currCommand, readFrom);
+	output->command = updateCommand(currCommand, readFrom);
 	while (true) {
 		//if the current line is a comment get the next line
-		while (currCommand->command == NULL || strcmp(currCommand->command, "//skip") == 0) {
-			currCommand = updateCommand(currCommand, readFrom);
+		while (currCommand->command == NULL || strcmp(currCommand->command, "//skip") == 0 || strcmp(currCommand->command, "\n") == 0) {
+			output->command = updateCommand(currCommand, readFrom);
 		}
 		//if the command is an L command return it
 		if (currCommand->type == L) {
-			return currCommand;
+			return output;
 		}
 		//Otherwise get the next line
 		else {
+			output->addresses++;
 			currCommand = updateCommand(currCommand, readFrom);
 		}
 		if (areThereMoreCommands(readFrom) == false) {
 			currCommand->type = N;
-			return currCommand;
+			return output;
 		}
 	}
 }
@@ -138,7 +144,6 @@ command_t* updateCommand(command_t* currCommand, FILE* readFrom) {
 	//gets the length of the command
 	int cmdLen = strlen(currCommand->command);
 	//updates the line number
-	currCommand->lineNumber++;
 	//copies the command into a command_t data structure
 	if (currCommand->command != NULL) {
 		//free(currCommand->command);
@@ -176,9 +181,9 @@ command_t* commandType(command_t* currCommand) {
 	return currCommand;
 }
 //checks if there are more commands in the file
-bool areThereMoreCommands(FILE* readFrom) { //TODO: Switch to ternary operator
+bool areThereMoreCommands(FILE* readFrom) {
 	bool isFileEnd = false;
-	//feof() returns 0 is there are still lines left in a file
+	//feof() returns 0 is there are NOT lines left in a file
 	if (feof(readFrom) == 0) {
 		isFileEnd = true;
 	}
@@ -361,7 +366,7 @@ cInstruct_t parseCInstruction(command_t* currCommand) {
 
 	return instruction;
 }
-void parseLInstruction(command_t* currCommand, symbolTable_p table) {
+bool parseLInstruction(command_t* currCommand, symbolTable_p table, int memAddress) {
 	assert(currCommand->type == L);
 	char cmd[MAXSIZE];
 	int Cmdlen = strlen(currCommand->command);
@@ -371,14 +376,18 @@ void parseLInstruction(command_t* currCommand, symbolTable_p table) {
 		}
 		cmd[Cmdlen - 2] = '\0';
 	}
-	if (isNum(cmd) == false) {
+	//currCommand->command = (char*)cmd;
+	currCommand->command = _strdup(cmd);
+	if (isNum(currCommand->command) == false) {
 		//otherwise check if the string is a valid symbol, if so add to the symbol table and set output to -1
-		if (isStringValidSymbol(cmd)) {
-			if (getVal(table, (const char*)cmd) == NULL) {
-				insert(table, cmd, &currCommand->lineNumber); //TODO: change EMPTYVAL to actual ROM address
+		if (isStringValidSymbol(currCommand->command)) {
+			if (getVal(table, currCommand->command) == NULL) {
+				insert(table, currCommand->command, &memAddress);
+				return true;
 			}
 		}
 	}
+	return false;
 }
 
 
@@ -392,7 +401,7 @@ bool isNum(char* command) {
 }
 
 //Returns a positive decimal val if the command is a int. if the command is a symbol adds to symbol table then returns -1 if an invalid input is given -2 is returned
-int parseAInstruction(command_t* currCommand, symbolTable_p symbolTable) {
+int parseAInstruction(command_t* currCommand, symbolTable_p symbolTable, int memAddress) {
 	int val = 0;
 	char cmd[MAXSIZE];
 	int Cmdlen = strlen(currCommand->command);
@@ -403,36 +412,45 @@ int parseAInstruction(command_t* currCommand, symbolTable_p symbolTable) {
 			cmd[i - 1] = currCommand->command[i];
 		}
 		cmd[Cmdlen - 1] = '\0';
+		//currCommand->command = (char*)cmd
+		currCommand->command = _strdup(cmd);
 		//checks if the string is a number, if so sets the output to the number version of the string
-		if (isNum(cmd)) {
-			val = atoi(cmd);
+		int number = atoi(cmd);
+		if (number == 0 && strcmp(cmd, "0") != 0) {
+			number = -1;
 		}
-		else if(getVal(symbolTable, (const char*)cmd) != NULL){
-			symbol_p symb = getVal(symbolTable, (const char*)cmd);
+		if (isNum(currCommand->command) && number >= 0 && number <= 32767) {
+			val = atoi(currCommand->command);
+		}
+		else if (getVal(symbolTable, currCommand->command) != NULL) {
+			symbol_p symb = getVal(symbolTable, currCommand->command);
 			val = *((int*)symb->value);
 		}
-		else if (isStringValidSymbol((const char*)cmd) == true) {
-			insert(symbolTable, (const char*)cmd, &currCommand->lineNumber);
+		else if (isStringValidSymbol(currCommand->command) == true) {
+			insert(symbolTable, currCommand->command, &memAddress);
+			val = -2;
 		}
 	}
 	return val;
 }
 
 
-Instruction_t parse(command_t* currCommand, int pass, symbolTable_p table) {
+Instruction_t parse(command_t* currCommand, int pass, symbolTable_p table, int memAddress) {
 	cInstruct_t temp = { nullcomp, nulldest, nulljump };
-	Instruction_t cmdVal = { temp, 0 };
+	Instruction_t cmdVal = { temp, -1 };
 	if (currCommand->command[strlen(currCommand->command) - 1] == '\n') {
 		currCommand->command[strlen(currCommand->command) - 1] = '\0';
 	}
 	if (pass == 1) {
 		if (currCommand->type == L) {
-			parseLInstruction(currCommand, table);
+			if (parseLInstruction(currCommand, table, memAddress)) {
+				cmdVal.A = -2;
+			}
 		}
 	}
 	else {
 		if (currCommand->type == A) {
-			cmdVal.A = parseAInstruction(currCommand, table);
+			cmdVal.A = parseAInstruction(currCommand, table, memAddress);
 		}
 		else if (currCommand->type == C) {
 			cmdVal.C = parseCInstruction(currCommand);
@@ -443,7 +461,6 @@ Instruction_t parse(command_t* currCommand, int pass, symbolTable_p table) {
 
 //Adds predefined symbols to the symbol table
 symbolTable_p addPredefSymbs(symbolTable_p table, int values[]) {
-	char name[REGSTRLEN];
 	insert(table, "SCREEN", &values[0]);
 	insert(table, "KBD", &values[1]);
 	insert(table, "SP", &values[2]);
@@ -477,7 +494,7 @@ void destroyCommand(command_t* command) {
 
 //CODE--GEN//
 bool GenerateCode(Instruction_t* instruct, FILE* fp) {
-	if (instruct->A != 0) {
+	if (instruct->A != -1) {
 		generateA_Command(instruct->A, fp);
 	}
 	else if (instruct->C.comp != nullcomp) {
