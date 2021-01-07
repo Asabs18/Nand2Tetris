@@ -140,14 +140,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="assemble.c" />
+    <ClCompile Include="codeGen.c" />
+    <ClCompile Include="parser.c" />
     <ClCompile Include="symbol.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="tokenizer.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="assemble.h" />
+    <ClInclude Include="codeGen.h" />
     <ClInclude Include="debug.h" />
+    <ClInclude Include="parser.h" />
     <ClInclude Include="symbol.h" />
+    <ClInclude Include="tokenizer.h" />
     <ClInclude Include="_symbol.h" />
   </ItemGroup>
   <ItemGroup>

@@ -3,192 +3,12 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include "munit.h"
-#include "assemble.h"
+#include "parser.h"
 #include "symbol.h"
 #include "_symbol.h"
 
-//defined values for below
 #define MAXSIZE 100
 #define EMPTYVAL 0
-
-///this file contains all function declarations that have to do with parsing or handling the command/// 
-
-FILE* openFile(const char* readFrom) {
-	FILE* file;
-	fopen_s(&file, readFrom, "r");
-	assert(file != NULL);
-	return file;
-}
-
-char* createCommand(FILE* file) {
-	static char command[MAXSIZE];
-	//gets the next command and sets it to command
-	if (feof(file) == 0) {
-		fgets(command, sizeof(command), file);
-	}
-	return command;
-}
-
-char* stripComments(char* command, int i) {
-	//removes comments from the string
-	static char newCommand[MAXSIZE];
-	assert(i < MAXSIZE);
-	//takes everything from a line except the comment 
-	strncpy_s((char*)newCommand, sizeof(newCommand), command, i);
-	//puts the new line character at the end of the string
-	newCommand[i] = '\n';
-	//removes any white space before the newline
-	for (int j = i; j > 0; j--) {
-		if (newCommand[j] == ' ') {
-			newCommand[j] = '\n';
-			i = j;
-			break;
-		}
-	}
-	//copies the new string over without white space
-	assert(i < (MAXSIZE - 1));
-	newCommand[i + 1] = '\0'; //TODO: Stop buffer overrun
-	return (char*)newCommand;
-}
-
-char* checkComments(char* command, int size) {
-	//Checks if the currCommand is or has a comment
-	for (int i = 0; i < size; i++) {
-		//creates a pair of chars that go through the string and find back to back '/'
-		char currChar = command[i];
-		char nextChar = command[i + 1];
-		if (currChar == '/' && nextChar == '/') {
-			//if they are at the start of the line, the line has no code so it gets skipped
-			if (i == 0) {
-				return FULLCOMMENT;
-			}
-			//Otherwise set size to how far i got which is how much valid code there is on a line. (there is never a need for code after a comment on the same line)
-			else {
-				return stripComments(command, i);
-			}
-		}
-	}
-	return command;
-}
-
-char* stripWhiteSpace(char* command) {
-	char newCommand[MAXSIZE];
-	int newCommandIndex = 0;
-	for (size_t i = 0; i < strlen(command); i++) {
-		if (command[i] != ' ') {
-			newCommand[newCommandIndex] = command[i];
-			newCommandIndex++;
-		}
-	}
-	newCommand[newCommandIndex] = '\0';
-	command = strdup(newCommand);
-	return command;
-}
-
-//moves the current command to the next valid line
-AR_t* advancePass1(command_t* currCommand, FILE* readFrom) {
-	AR_t* output = malloc(sizeof(AR_t));
-	output->command = malloc(sizeof(command_t));
-	output->addresses = 0;
-	//runs until the return statement is hit in the loop
-	output->command = updateCommand(currCommand, readFrom);
-	while (true) {
-		//if the current line is a comment get the next line
-		while (currCommand->command == NULL || strcmp(currCommand->command, "//skip") == 0 || strcmp(currCommand->command, "\n") == 0) {
-			output->command = updateCommand(currCommand, readFrom);
-		}
-		//if the command is an L command return it
-		if (currCommand->type == L) {
-			return output;
-		}
-		//Otherwise get the next line
-		else {
-			output->addresses++;
-			currCommand = updateCommand(currCommand, readFrom);
-		}
-		if (areThereMoreCommands(readFrom) == false) {
-			currCommand->type = N;
-			return output;
-		}
-	}
-}
-
-//moves the current command to the next valid line
-command_t* advancePass2(command_t* currCommand, FILE* readFrom) {
-	currCommand = updateCommand(currCommand, readFrom);
-	while (true) {
-		//get the next line if the current line is a comment
-		while (currCommand->command == NULL || strcmp(currCommand->command, "//skip") == 0 || strcmp(currCommand->command, "\n") == 0) {
-			currCommand = updateCommand(currCommand, readFrom);
-		}
-		//return everything that is not an L command
-		if (currCommand->type != L) {
-			return currCommand;
-		}
-		//If the command is an L command get the next line
-		else {
-			currCommand = updateCommand(currCommand, readFrom);
-		}
-		if (areThereMoreCommands(readFrom) == false) {
-			currCommand->type = N;
-			return currCommand;
-		}
-	}
-}
-
-
-command_t* updateCommand(command_t* currCommand, FILE* readFrom) {
-	//gets a new command from the read file
-	currCommand->command = createCommand(readFrom);
-	currCommand->command = stripWhiteSpace(currCommand->command);
-	//gets the length of the command
-	int cmdLen = strlen(currCommand->command);
-	//updates the line number
-	//copies the command into a command_t data structure
-	if (currCommand->command != NULL) {
-		//free(currCommand->command);
-	}
-	currCommand->command = _strdup(checkComments(currCommand->command, cmdLen));
-	//gets the command type of the current command
-	currCommand = commandType(currCommand);
-	//returns the new command
-	return currCommand;
-}
-
-//returns the command type of the current command, A, C or L command 
-command_t* commandType(command_t* currCommand) {
-	int size;
-	//TODO: Make the if statement code work. BEFORE USING NULL AS A FULL LINE COMMENT REPLACEMENT
-	//if (currCommand->command == NULL) {
-		//size = 1;
-	//}
-	//else {
-	size = strlen(currCommand->command);
-	//}
-	int lastPlace = 1;
-	if (currCommand->command[size - lastPlace] == '\n') {
-		lastPlace++;
-	}
-	if (currCommand->command[0] == '(' && currCommand->command[size - lastPlace] == ')') {
-		currCommand->type = L;
-	}
-	else if (currCommand->command[0] == '@') {
-		currCommand->type = A;
-	}
-	else {
-		currCommand->type = C;
-	}
-	return currCommand;
-}
-//checks if there are more commands in the file
-bool areThereMoreCommands(FILE* readFrom) {
-	bool isFileEnd = false;
-	//feof() returns 0 is there are NOT lines left in a file
-	if (feof(readFrom) == 0) {
-		isFileEnd = true;
-	}
-	return isFileEnd;
-}
 
 /*
 PARSING THE C-INSTRUCTION:
@@ -377,12 +197,14 @@ bool parseLInstruction(command_t* currCommand, symbolTable_p table, int memAddre
 		cmd[Cmdlen - 2] = '\0';
 	}
 	//currCommand->command = (char*)cmd;
-	currCommand->command = _strdup(cmd);
+	currCommand->command = _strdup((char*)cmd);
+	static int mem;
+	mem = memAddress;
 	if (isNum(currCommand->command) == false) {
 		//otherwise check if the string is a valid symbol, if so add to the symbol table and set output to -1
 		if (isStringValidSymbol(currCommand->command)) {
 			if (getVal(table, currCommand->command) == NULL) {
-				insert(table, currCommand->command, &memAddress);
+				insert(table, currCommand->command, &mem);
 				return true;
 			}
 		}
@@ -400,6 +222,7 @@ bool isNum(char* command) {
 	return true;
 }
 
+#define MAXINTSIZE 32767
 //Returns a positive decimal val if the command is a int. if the command is a symbol adds to symbol table then returns -1 if an invalid input is given -2 is returned
 int parseAInstruction(command_t* currCommand, symbolTable_p symbolTable, int memAddress) {
 	int val = 0;
@@ -413,13 +236,15 @@ int parseAInstruction(command_t* currCommand, symbolTable_p symbolTable, int mem
 		}
 		cmd[Cmdlen - 1] = '\0';
 		//currCommand->command = (char*)cmd
-		currCommand->command = _strdup(cmd);
+		currCommand->command = _strdup((char*)cmd);
+		static int mem;
+		mem = memAddress;
 		//checks if the string is a number, if so sets the output to the number version of the string
 		int number = atoi(cmd);
 		if (number == 0 && strcmp(cmd, "0") != 0) {
 			number = -1;
 		}
-		if (isNum(currCommand->command) && number >= 0 && number <= 32767) {
+		if (isNum(currCommand->command) && number >= 0 && number <= MAXINTSIZE) {
 			val = atoi(currCommand->command);
 		}
 		else if (getVal(symbolTable, currCommand->command) != NULL) {
@@ -427,7 +252,7 @@ int parseAInstruction(command_t* currCommand, symbolTable_p symbolTable, int mem
 			val = *((int*)symb->value);
 		}
 		else if (isStringValidSymbol(currCommand->command) == true) {
-			insert(symbolTable, currCommand->command, &memAddress);
+			insert(symbolTable, currCommand->command, &mem);
 			val = -2;
 		}
 	}
@@ -490,60 +315,4 @@ symbolTable_p addPredefSymbs(symbolTable_p table, int values[]) {
 void destroyCommand(command_t* command) {
 	free(command->command);
 	//free(command); //TODO: come back to 
-}
-
-//CODE--GEN//
-bool GenerateCode(Instruction_t* instruct, FILE* fp) {
-	if (instruct->A != -1) {
-		generateA_Command(instruct->A, fp);
-	}
-	else if (instruct->C.comp != nullcomp) {
-		generateC_Command(instruct->C, fp);
-	}
-	else {
-		return false;
-	}
-	return true;
-}
-
-bool produceOutput(uint16_t binVal, FILE* fp) {
-	char* output = intToAscii(binVal);
-	char* fileName = "output.hack";
-	if (strlen(output) < 16) {
-		for (size_t i = 0; i < (16 - strlen(output)); i++) {
-			fprintf(fp, "0");
-		}
-	}
-	fprintf(fp, "%s\n", output);
-	return true;
-}
-
-bool generateC_Command(cInstruct_t command, FILE* fp) {
-	uint16_t startVal = 0xE000;
-	uint16_t output = startVal | (uint16_t)command.comp;
-	output |= (uint16_t)command.dest;
-	output |= (uint16_t)command.jump;
-	return produceOutput(output, fp);
-}
-
-#define SIXTEEN_CHAR_OFF 0x7FFF
-bool generateA_Command(int command, FILE* fp) {
-	uint16_t output = (uint16_t)command & SIXTEEN_CHAR_OFF;
-	return produceOutput(output, fp);;
-}
-
-char* intToAscii(int intIn) {
-	static char buffer[MAXSIZE];
-	_itoa_s(intIn, buffer, MAXSIZE, 2);
-	return buffer;
-}
-
-FILE* openOutputFile(char* fileName) {
-	FILE* fp;
-	errno_t err = fopen_s(&fp, fileName, "w+");
-	if (err != 0 || !fp) {
-		perror("File opening failed");
-		exit(1);
-	}
-	return fp;
 }

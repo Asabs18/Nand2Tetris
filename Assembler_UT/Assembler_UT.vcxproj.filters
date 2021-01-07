@@ -27,9 +27,6 @@
     <ClCompile Include="..\Assembler\symbol.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Assembler\assemble.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="symbolChecks.c">
       <Filter>Source Files\Unit_Tests</Filter>
     </ClCompile>
@@ -46,6 +43,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="C:\Users\aidan\OneDrive\Documents\C Add Ons\munit-master\munit.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Assembler\tokenizer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Assembler\parser.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Assembler\codeGen.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

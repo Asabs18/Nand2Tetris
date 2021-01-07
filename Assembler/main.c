@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include "symbol.h"
 #include "assemble.h"
+#include "tokenizer.h"
+#include "parser.h"
+#include "codeGen.h"
 
 ///This file contains the main loop for the assembler///
 ///There are currently two forms of pseudo code for this main loop show below///

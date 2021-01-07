@@ -142,8 +142,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Assembler\assemble.c" />
+    <ClCompile Include="..\Assembler\codeGen.c" />
+    <ClCompile Include="..\Assembler\parser.c" />
     <ClCompile Include="..\Assembler\symbol.c" />
+    <ClCompile Include="..\Assembler\tokenizer.c" />
     <ClCompile Include="C:\Users\aidan\OneDrive\Documents\C Add Ons\munit-master\munit.c">
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">_DEBUG;_CONSOLE;%(PreprocessorDefinitions); MUNIT_TEST_NAME_LEN=70</PreprocessorDefinitions>
     </ClCompile>
