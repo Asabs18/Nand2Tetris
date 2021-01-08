@@ -28,7 +28,7 @@ printTableReturnsTrue(const MunitParameter params[], void* data) {
 	//Arrange
 	symbolTable_p table = createSymbolTable();
 	int values[] = { 16384, 24576, 0, 1, 2, 3, 4 };
-	table = addPredefSymbs(table, values);
+	table = addPredefSymbs(table);
 
 	//Act
 	bool output = printHash(table, stderr, "SCREEN");
@@ -46,14 +46,14 @@ TableHasRigthValues(const MunitParameter params[], void* data) {
 	//Arrange
 	symbolTable_p table = createSymbolTable();
 	int values[] = { 16384, 24576, 0, 1, 2, 3, 4 };
-	table = addPredefSymbs(table, values);
+	table = addPredefSymbs(table);
 	const char* screen = "SCREEN";
 
 	//Act
 	symbol_p symb = getVal(table, screen);
 
 	//Assert
-	munit_assert_int(*((int*)symb->value), ==, 16384);
+	munit_assert_int(*((int*)symb->value), == , 16384);
 	destroySymbolTable(table);
 	return MUNIT_OK;
 }
@@ -63,7 +63,7 @@ TableHasRigthValues2(const MunitParameter params[], void* data) {
 	//Arrange
 	symbolTable_p table = createSymbolTable();
 	int values[] = { 16384, 24576, 0, 1, 2, 3, 4 };
-	table = addPredefSymbs(table, values);
+	table = addPredefSymbs(table);
 
 	//Act
 	symbol_p symb = getVal(table, "KBD");

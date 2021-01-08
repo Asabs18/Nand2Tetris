@@ -133,7 +133,7 @@ IdentifiesCCommandCorrectly(const MunitParameter params[], void* data) { //TODO:
 	command_t currCommand = { C, command };
 	symbolTable_p table = createSymbolTable();
 	int values[] = { 16384, 24576, 0, 1, 2, 3, 4 };
-	table = addPredefSymbs(table, values);
+	table = addPredefSymbs(table);
 	int pass = 2;
 
 	//Act
@@ -151,7 +151,7 @@ IdentifiesACommandCorrectly(const MunitParameter params[], void* data) {
 	command_t currCommand = { A, command };
 	symbolTable_p table = createSymbolTable();
 	int values[] = { 16384, 24576, 0, 1, 2, 3, 4 };
-	table = addPredefSymbs(table, values);
+	table = addPredefSymbs(table);
 	int pass = 2;
 
 	//Act
@@ -169,7 +169,7 @@ IdentifiesLCommandCorrectly(const MunitParameter params[], void* data) {
 	command_t currCommand = { L, command };
 	symbolTable_p table = createSymbolTable();
 	int values[] = { 16384, 24576, 0, 1, 2, 3, 4 };
-	table = addPredefSymbs(table, values);
+	table = addPredefSymbs(table);
 	int pass = 2;
 
 	//Act

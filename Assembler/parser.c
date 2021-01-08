@@ -33,7 +33,7 @@ the translation from hex to binary will be the only remaining issue for
 parsed commands
 */
 
-symbolTable_p fillDestTable(symbolTable_p destTable, dest_t vals[]) {
+symbolTable_p fillDestTable(symbolTable_p destTable, dest_t vals[]) { //TODO: change to static
 	insert(destTable, "null", &vals[0]);
 	insert(destTable, "M", &vals[1]);
 	insert(destTable, "D", &vals[2]);
@@ -198,13 +198,15 @@ bool parseLInstruction(command_t* currCommand, symbolTable_p table, int memAddre
 	}
 	//currCommand->command = (char*)cmd;
 	currCommand->command = _strdup((char*)cmd);
-	static int mem;
-	mem = memAddress;
+	/*static int mem;
+	mem = memAddress;*/
+	int* mem = malloc(sizeof(memAddress));
+	*mem = memAddress;
 	if (isNum(currCommand->command) == false) {
 		//otherwise check if the string is a valid symbol, if so add to the symbol table and set output to -1
 		if (isStringValidSymbol(currCommand->command)) {
 			if (getVal(table, currCommand->command) == NULL) {
-				insert(table, currCommand->command, &mem);
+				insert(table, currCommand->command, (void*)mem);
 				return true;
 			}
 		}
@@ -237,8 +239,8 @@ int parseAInstruction(command_t* currCommand, symbolTable_p symbolTable, int mem
 		cmd[Cmdlen - 1] = '\0';
 		//currCommand->command = (char*)cmd
 		currCommand->command = _strdup((char*)cmd);
-		static int mem;
-		mem = memAddress;
+		int* mem = malloc(sizeof(memAddress));
+		*mem = memAddress;
 		//checks if the string is a number, if so sets the output to the number version of the string
 		int number = atoi(cmd);
 		if (number == 0 && strcmp(cmd, "0") != 0) {
@@ -252,8 +254,10 @@ int parseAInstruction(command_t* currCommand, symbolTable_p symbolTable, int mem
 			val = *((int*)symb->value);
 		}
 		else if (isStringValidSymbol(currCommand->command) == true) {
-			insert(symbolTable, currCommand->command, &mem);
-			val = -2;
+			insert(symbolTable, currCommand->command, mem);
+			val = *mem;
+			val *= -1;
+			val -= 1;
 		}
 	}
 	return val;
@@ -285,7 +289,8 @@ Instruction_t parse(command_t* currCommand, int pass, symbolTable_p table, int m
 }
 
 //Adds predefined symbols to the symbol table
-symbolTable_p addPredefSymbs(symbolTable_p table, int values[]) {
+symbolTable_p addPredefSymbs(symbolTable_p table) {
+	static int values[] = { 16384, 24576, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 	insert(table, "SCREEN", &values[0]);
 	insert(table, "KBD", &values[1]);
 	insert(table, "SP", &values[2]);
