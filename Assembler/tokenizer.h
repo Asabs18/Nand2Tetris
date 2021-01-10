@@ -8,7 +8,7 @@
 ///----------------TOKENIZER--------------///
 //Moves to the next line in a file, different functions for each pass
 AR_t* advancePass1(command_t* currCommand, FILE* readFrom);
-command_t* advancePass2(command_t* currCommand, FILE* readFrom);
+AR_t* advancePass2(command_t* currCommand, FILE* readFrom);
 //Gets the command type of a command_t->command(char*)
 command_t* commandType(command_t* currCommand);
 //Updates each field of a command_t i.e LineNum, command, commandType

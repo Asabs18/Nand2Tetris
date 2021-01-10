@@ -1,6 +1,9 @@
 #include "assemble.h"
 #include "munit_ex.h"
 #include <assert.h>
+#include "tokenizer.h"
+#include "parser.h"
+#include "codeGen.h"
 
 static MunitResult
 intToAsciiConversionValid1(const MunitParameter params[], void* data) {

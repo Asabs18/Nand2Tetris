@@ -2,9 +2,8 @@
 #include "assemble.h"
 #include "munit.h"
 
-typedef struct commandTests{
+typedef struct commandTests {
 	commandType_t type;
-	int lineNum;
 	char* command;
 }commandTests_t;
 

@@ -46,7 +46,7 @@ char* stripComments(char* command, int i) {
 	}
 	//copies the new string over without white space
 	assert(i < (MAXSIZE - 1));
-	newCommand[i + 1] = '\0'; //TODO: Stop buffer overrun
+	newCommand[i + 1] = '\0';
 	return (char*)newCommand;
 }
 
@@ -71,14 +71,17 @@ char* checkComments(char* command, int size) {
 }
 
 char* stripWhiteSpace(char* command) {
+	//creates buffer for new command
 	char newCommand[MAXSIZE];
 	int newCommandIndex = 0;
+	//loops through the command and if it finds whitespace, don't copy it into the buffer
 	for (size_t i = 0; i < strlen(command); i++) {
 		if (command[i] != ' ') {
 			newCommand[newCommandIndex] = command[i];
 			newCommandIndex++;
 		}
 	}
+	//ends the buffer
 	newCommand[newCommandIndex] = '\0';
 	command = strdup(newCommand);
 	return command;
@@ -93,44 +96,47 @@ AR_t* advancePass1(command_t* currCommand, FILE* readFrom) {
 	output->command = updateCommand(currCommand, readFrom);
 	while (true) {
 		//if the current line is a comment get the next line
-		while (currCommand->command == NULL || strcmp(currCommand->command, "//skip") == 0 || strcmp(currCommand->command, "\n") == 0) {
+		while (output->command->command == NULL || strcmp(output->command->command, "//skip") == 0 || strcmp(output->command->command, "\n") == 0) {
 			output->command = updateCommand(currCommand, readFrom);
 		}
 		//if the command is an L command return it
-		if (currCommand->type == L) {
+		if (output->command->type == L) {
 			return output;
 		}
 		//Otherwise get the next line
 		else {
 			output->addresses++;
-			currCommand = updateCommand(currCommand, readFrom);
+			output->command = updateCommand(currCommand, readFrom);
 		}
 		if (areThereMoreCommands(readFrom) == false) {
-			currCommand->type = N;
+			output->command->type = N;
 			return output;
 		}
 	}
 }
 
 //moves the current command to the next valid line
-command_t* advancePass2(command_t* currCommand, FILE* readFrom) {
-	currCommand = updateCommand(currCommand, readFrom);
+AR_t* advancePass2(command_t* currCommand, FILE* readFrom) {
+	AR_t* output = malloc(sizeof(AR_t));
+	output->command = malloc(sizeof(command_t));
+	output->addresses = 0;
+	output->command = updateCommand(currCommand, readFrom);
 	while (true) {
 		//get the next line if the current line is a comment
-		while (currCommand->command == NULL || strcmp(currCommand->command, "//skip") == 0 || strcmp(currCommand->command, "\n") == 0) {
-			currCommand = updateCommand(currCommand, readFrom);
+		while (output->command->command == NULL || strcmp(output->command->command, "//skip") == 0 || strcmp(output->command->command, "\n") == 0) {
+			output->command = updateCommand(currCommand, readFrom);
 		}
 		//return everything that is not an L command
-		if (currCommand->type != L) {
-			return currCommand;
+		if (output->command->type != L) {
+			return output;
 		}
 		//If the command is an L command get the next line
 		else {
-			currCommand = updateCommand(currCommand, readFrom);
+			output->command = updateCommand(currCommand, readFrom);
 		}
 		if (areThereMoreCommands(readFrom) == false) {
-			currCommand->type = N;
-			return currCommand;
+			output->command->type = N;
+			return output;
 		}
 	}
 }
@@ -157,23 +163,22 @@ command_t* updateCommand(command_t* currCommand, FILE* readFrom) {
 //returns the command type of the current command, A, C or L command 
 command_t* commandType(command_t* currCommand) {
 	int size;
-	//TODO: Make the if statement code work. BEFORE USING NULL AS A FULL LINE COMMENT REPLACEMENT
-	//if (currCommand->command == NULL) {
-		//size = 1;
-	//}
-	//else {
+	//gets the size of the command
 	size = strlen(currCommand->command);
-	//}
 	int lastPlace = 1;
+	//looks for the null character in a string and updates the last place accordingly. 
 	if (currCommand->command[size - lastPlace] == '\n') {
 		lastPlace++;
 	}
+	//Checks for L command
 	if (currCommand->command[0] == '(' && currCommand->command[size - lastPlace] == ')') {
 		currCommand->type = L;
 	}
+	//Checks for A command
 	else if (currCommand->command[0] == '@') {
 		currCommand->type = A;
 	}
+	//otherwise is C command
 	else {
 		currCommand->type = C;
 	}

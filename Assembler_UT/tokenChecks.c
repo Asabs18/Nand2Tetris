@@ -1,6 +1,9 @@
+#include <assert.h>
 #include "assemble.h"
 #include "munit_ex.h"
-#include <assert.h>
+#include "tokenizer.h"
+#include "parser.h"
+#include "codeGen.h"
 
 ///These are all the functions for the assemblerChecks.c test suite///
 ///These tests handle all functions that are dealing with commands///
@@ -35,7 +38,6 @@ createCommandSavesReadSpot(const MunitParameter params[], void* data) {
 	}
 	char* command = createCommand(fp);
 	if (strcmp(command, "//Hello\n") != 0) {
-		//TODO: add munit logging, read about in munit docs
 		return MUNIT_ERROR;
 	}
 
@@ -107,12 +109,12 @@ advanceReturnsValidCommand(const MunitParameter params[], void* data) {
 	command_t currCommand = { A, command };
 
 	//Act
-	command_t* answer = advancePass2(&currCommand, fp);
+	AR_t* answer = advancePass2(&currCommand, fp);
 
 	//Assert
-	munit_assert(strcmp(answer->command, "command1\n") == 0);
+	munit_assert(strcmp(answer->command->command, "command1\n") == 0);
 	fclose(fp);
-	destroyCommand(answer);
+	destroyCommand(answer->command);
 	return MUNIT_OK;
 }
 
@@ -129,12 +131,12 @@ advanceReturnsLabelPassOne(const MunitParameter params[], void* data) {
 	command_t currCommand = { A, command };
 
 	//Act
-	command_t* answer = advancePass1(&currCommand, fp);
+	AR_t* answer = advancePass1(&currCommand, fp);
 
 	//Assert
-	munit_assert(strcmp(answer->command, "(command2)\n") == 0);
+	munit_assert(strcmp(answer->command->command, "(command2)\n") == 0);
 	fclose(fp);
-	destroyCommand(answer);
+	destroyCommand(answer->command);
 	return MUNIT_OK;
 }
 
@@ -151,12 +153,12 @@ advanceReturnsNotLabelPassTwo(const MunitParameter params[], void* data) {
 	command_t currCommand = { A, command };
 
 	//Act
-	command_t* answer = advancePass2(&currCommand, fp);
+	AR_t* answer = advancePass2(&currCommand, fp);
 
 	//Assert
-	munit_assert(strcmp(answer->command, "command1\n") == 0);
+	munit_assert(strcmp(answer->command->command, "command1\n") == 0);
 	fclose(fp);
-	destroyCommand(answer);
+	destroyCommand(answer->command);
 	return MUNIT_OK;
 }
 
@@ -173,14 +175,14 @@ advanceFindsSecondLabel(const MunitParameter params[], void* data) {
 	command_t currCommand = { A, command };
 
 	//Act
-	command_t* answer = advancePass1(&currCommand, fp);
-	destroyCommand(answer);
-	command_t* answer2 = advancePass1(&currCommand, fp);
+	AR_t* answer = advancePass1(&currCommand, fp);
+	destroyCommand(answer->command);
+	AR_t* answer2 = advancePass1(&currCommand, fp);
 
 	//Assert
-	munit_assert(strcmp(answer2->command, "(command6)\n") == 0);
+	munit_assert(strcmp(answer2->command->command, "(command6)\n") == 0);
 	fclose(fp);
-	destroyCommand(answer2);
+	destroyCommand(answer2->command);
 	return MUNIT_OK;
 }
 

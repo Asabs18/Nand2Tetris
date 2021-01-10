@@ -4,6 +4,9 @@
 #include "munit_ex.h"
 #include "munit.h"
 #include "_symbol.h"
+#include "tokenizer.h"
+#include "parser.h"
+#include "codeGen.h"
 
 ///These are all the functions for the symbolChecks.c test suite///
 ///These tests handle all functions that are dealing with the symbol_t struct or the symbolTable///

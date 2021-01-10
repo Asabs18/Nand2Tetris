@@ -4,11 +4,13 @@
 #include "tokenizer.h"
 #include "parser.h"
 #include "codeGen.h"
+#include "debug.h"
 
 ///This file contains the main loop for the assembler///
 ///There are currently two forms of pseudo code for this main loop show below///
 
 int main(int argc, char** argv) {
+	//initialize_debugging();
 	const char* fileName = "input/Pong/Pong.asm";
 	const char* outputFileName = "output/output.hack";
 	int pass = 1;
@@ -18,7 +20,6 @@ int main(int argc, char** argv) {
 	symbolTable_p symbTable = createSymbolTable();
 	symbTable = addPredefSymbs(symbTable);
 	FILE* fp = openFile(fileName);
-	//int lineNumber = 0;
 	command_t* currCommand = malloc(sizeof(command_t));
 	int memAddress = 0;
 	while (areThereMoreCommands(fp)) {
@@ -39,7 +40,8 @@ int main(int argc, char** argv) {
 	pass = 2;
 	memAddress = 16;
 	while (1) {
-		currCommand = advancePass2(currCommand, Rewindfp);
+		advanceOuput = advancePass2(currCommand, Rewindfp);
+		currCommand = advanceOuput->command;
 		if (areThereMoreCommands(Rewindfp) == false) {
 			break;
 		}
@@ -57,4 +59,5 @@ int main(int argc, char** argv) {
 	fclose(outputFp);
 	fclose(Rewindfp);
 	//destroyCommand(currCommand);
+	//terminate_debugging();
 }

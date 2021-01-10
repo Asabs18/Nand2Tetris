@@ -55,10 +55,6 @@ typedef struct {
 ///----------------SYMBOL--TABLE--HELPER--FUNCTIONS----------------///
 //Adds all predef symbols to general symbol table
 symbolTable_p addPredefSymbs(symbolTable_p table);
-//adds values for each C-Command field respectively 
-symbolTable_p fillJumpTable(symbolTable_p jumpTable, jump_t vals[]);
-symbolTable_p fillDestTable(symbolTable_p destTable, dest_t vals[]);
-symbolTable_p fillCompTable(symbolTable_p compTable, comp_t vals[]);
 
 
 ///----------------HELPER--FUNCTIONS-------------------------------///

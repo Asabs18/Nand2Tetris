@@ -1,12 +1,14 @@
 #include "assemble.h"
 #include "parseChecks.h"
 #include "munit_ex.h"
+#include "tokenizer.h"
+#include "parser.h"
+#include "codeGen.h"
 
 static void*
 compTest1_setup(const MunitParameter params[], void* user_data) {
 	commandTests_t* command = malloc(sizeof(commandTests_t));
 	command->type = C;
-	command->lineNum = 10;
 	command->command = "0;JMP";
 	return command;
 }
@@ -20,7 +22,6 @@ static void*
 compTest2_setup(const MunitParameter params[], void* user_data) {
 	commandTests_t* command = malloc(sizeof(commandTests_t));
 	command->type = C;
-	command->lineNum = 11;
 	command->command = "M = D; JGT";
 	return command;
 }
@@ -48,6 +49,7 @@ static MunitResult
 ReturnsCorrectComp(const MunitParameter params[], void* data) {
 	//Arrange
 	command_t* currCommand = (command_t*)data;
+	currCommand->command = "0;JMP";
 
 
 	//Act
@@ -62,6 +64,7 @@ static MunitResult
 ReturnsCorrectDest(const MunitParameter params[], void* data) {
 	//Arrange
 	command_t* currCommand = (command_t*)data;
+	currCommand->command = "0;JMP";
 
 	//Act
 	cInstruct_t instruction = parseCInstruction(currCommand);
@@ -75,6 +78,7 @@ static MunitResult
 ReturnsCorrectJump(const MunitParameter params[], void* data) {
 	//Arrange
 	command_t* currCommand = (command_t*)data;
+	currCommand->command = "0;JMP";
 
 	//Act
 	cInstruct_t instruction = parseCInstruction(currCommand);
@@ -88,6 +92,7 @@ static MunitResult
 ReturnsCorrectComp2(const MunitParameter params[], void* data) {
 	//Arrange
 	command_t* currCommand = (command_t*)data;
+	currCommand->command = "M = D; JGT";
 	currCommand->command = stripWhiteSpace(currCommand->command);
 
 	//Act
@@ -102,6 +107,7 @@ static MunitResult
 ReturnsCorrectDest2(const MunitParameter params[], void* data) {
 	//Arrange
 	command_t* currCommand = (command_t*)data;
+	currCommand->command = "M = D; JGT";
 	currCommand->command = stripWhiteSpace(currCommand->command);
 
 	//Act
@@ -116,6 +122,7 @@ static MunitResult
 ReturnsCorrectJump2(const MunitParameter params[], void* data) {
 	//Arrange
 	command_t* currCommand = (command_t*)data;
+	currCommand->command = "M = D; JGT";
 	currCommand->command = stripWhiteSpace(currCommand->command);
 
 	//Act
@@ -127,7 +134,55 @@ ReturnsCorrectJump2(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-IdentifiesCCommandCorrectly(const MunitParameter params[], void* data) { //TODO: Fix cCommand
+ReturnsCorrectComp3(const MunitParameter params[], void* data) {
+	//Arrange
+	command_t* currCommand = malloc(sizeof(command_t));
+	currCommand->type = C;
+	currCommand->command = "MD = -1; JMP";
+	currCommand->command = stripWhiteSpace(currCommand->command);
+
+	//Act
+	cInstruct_t instruction = parseCInstruction(currCommand);
+
+	//Assert
+	munit_assert(instruction.comp == negOne);
+	return MUNIT_OK;
+}
+
+static MunitResult
+ReturnsCorrectDest3(const MunitParameter params[], void* data) {
+	//Arrange
+	command_t* currCommand = malloc(sizeof(command_t));
+	currCommand->type = C;
+	currCommand->command = "MD = -1; JMP";
+	currCommand->command = stripWhiteSpace(currCommand->command);
+
+	//Act
+	cInstruct_t instruction = parseCInstruction(currCommand);
+
+	//Assert
+	munit_assert(instruction.dest == MD);
+	return MUNIT_OK;
+}
+
+static MunitResult
+ReturnsCorrectJump3(const MunitParameter params[], void* data) {
+	//Arrange
+	command_t* currCommand = malloc(sizeof(command_t));
+	currCommand->type = C;
+	currCommand->command = "MD = -1; JMP";
+	currCommand->command = stripWhiteSpace(currCommand->command);
+
+	//Act
+	cInstruct_t instruction = parseCInstruction(currCommand);
+
+	//Assert
+	munit_assert(instruction.jump == JMP);
+	return MUNIT_OK;
+}
+
+static MunitResult
+IdentifiesCCommandCorrectly(const MunitParameter params[], void* data) {
 	//Arrange
 	char* command = "M=D;JGT";
 	command_t currCommand = { C, command };
@@ -170,13 +225,13 @@ IdentifiesLCommandCorrectly(const MunitParameter params[], void* data) {
 	symbolTable_p table = createSymbolTable();
 	int values[] = { 16384, 24576, 0, 1, 2, 3, 4 };
 	table = addPredefSymbs(table);
-	int pass = 2;
+	int pass = 1;
 
 	//Act
 	Instruction_t instruction = parse(&currCommand, pass, table, 10);
 
 	//Assert
-	munit_assert(instruction.C.comp == nullcomp && instruction.A == 0);
+	munit_assert(instruction.C.comp == nullcomp && instruction.A == -2);
 	return MUNIT_OK;
 }
 
@@ -185,6 +240,7 @@ destReturnsCorrectVal(const MunitParameter params[], void* data) {
 	//Arrange
 	munit_assert(data != NULL);
 	command_t* currCommand = (command_t*)data;
+	currCommand->command = "M = D; JGT";
 	currCommand->command = stripWhiteSpace(currCommand->command);
 	int destEndIndex = 1;
 
@@ -202,11 +258,14 @@ compReturnsCorrectVal(const MunitParameter params[], void* data) {
 	//Arrange
 	munit_assert(data != NULL);
 	command_t* currCommand = (command_t*)data;
+	currCommand->command = "M = D; JGT";
+	int Ceq = 1;
+	int Csc = 3;
 	currCommand->command = stripWhiteSpace(currCommand->command);
 
 	//Act
 	cInstruct_t instruction = { nullcomp, Mdest, JMP };
-	instruction = comp(currCommand, instruction);
+	instruction = comp(currCommand, instruction, Ceq, Csc);
 
 	//Assert
 	munit_assert(instruction.comp == Dcomp);
@@ -218,6 +277,7 @@ jumpReturnsCorrectVal(const MunitParameter params[], void* data) {
 	//Arrange
 	munit_assert(data != NULL);
 	command_t* currCommand = (command_t*)data;
+	currCommand->command = "M = D; JGT";
 	currCommand->command = stripWhiteSpace(currCommand->command);
 	int jumpStartIndex = 4;
 
@@ -229,6 +289,7 @@ jumpReturnsCorrectVal(const MunitParameter params[], void* data) {
 	munit_assert(instruction.jump == JGT);
 	return MUNIT_OK;
 }
+
 
 //declares the test suite to run each test in this file
 MunitTest parseCheck_tests[] = {
@@ -242,12 +303,15 @@ MunitTest parseCheck_tests[] = {
 };
 
 //Tests specifically for the C-Instruction
-MunitTest parseCheckForCInstruct_tests[] = { //TODO: change naming
+MunitTest parseCheckForCInstruct_tests[] = {
 	munit_ex_register_test(ReturnsCorrectComp, compTest1_setup, compTest1_tear_down, MUNIT_TEST_OPTION_NONE, NULL),
 	munit_ex_register_test(ReturnsCorrectDest, compTest1_setup, compTest1_tear_down, MUNIT_TEST_OPTION_NONE, NULL),
 	munit_ex_register_test(ReturnsCorrectJump, compTest1_setup, compTest1_tear_down, MUNIT_TEST_OPTION_NONE, NULL),
 	munit_ex_register_test(ReturnsCorrectComp2, compTest2_setup, compTest2_tear_down, MUNIT_TEST_OPTION_NONE, NULL),
 	munit_ex_register_test(ReturnsCorrectDest2, compTest2_setup, compTest2_tear_down, MUNIT_TEST_OPTION_NONE, NULL),
 	munit_ex_register_test(ReturnsCorrectJump2, compTest2_setup, compTest2_tear_down, MUNIT_TEST_OPTION_NONE, NULL),
+	munit_ex_register_test(ReturnsCorrectComp3, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL),
+	munit_ex_register_test(ReturnsCorrectDest3, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL),
+	munit_ex_register_test(ReturnsCorrectJump3, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL),
 	{ NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };
