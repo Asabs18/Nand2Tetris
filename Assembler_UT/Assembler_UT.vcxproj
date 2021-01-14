@@ -101,6 +101,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>..\..\munit-master;..\Assembler;..\..\uthash-master\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -115,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\aidan\Desktop\munit-master (1)\munit-master;..\Assembler;C:\Users\aidan\Desktop\uthash-master\uthash-master\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\munit-master;..\Assembler;..\..\uthash-master\src</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
@@ -133,6 +134,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>..\..\munit-master;..\Assembler;..\..\uthash-master\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -142,13 +144,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\munit-master\munit.c" />
     <ClCompile Include="..\Assembler\codeGen.c" />
     <ClCompile Include="..\Assembler\parser.c" />
     <ClCompile Include="..\Assembler\symbol.c" />
     <ClCompile Include="..\Assembler\tokenizer.c" />
-    <ClCompile Include="C:\Users\aidan\OneDrive\Documents\C Add Ons\munit-master\munit.c">
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">_DEBUG;_CONSOLE;%(PreprocessorDefinitions); MUNIT_TEST_NAME_LEN=70</PreprocessorDefinitions>
-    </ClCompile>
     <ClCompile Include="codeGenChecks.c" />
     <ClCompile Include="heirarchy.c" />
     <ClCompile Include="tokenChecks.c" />
