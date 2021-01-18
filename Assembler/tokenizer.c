@@ -83,7 +83,7 @@ char* stripWhiteSpace(char* command) {
 	}
 	//ends the buffer
 	newCommand[newCommandIndex] = '\0';
-	command = strdup(newCommand);
+	command = _strdup(newCommand);
 	return command;
 }
 

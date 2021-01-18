@@ -3,8 +3,12 @@
   "Id": "5f9395d3-760c-41be-95e8-d486e7fd3f7c",
   "Items": [
     {
+      "Id": "8a451ad2-d065-4d79-a567-82e486eba170",
+      "Command": "input/Add/emptyFile.asm"
+    },
+    {
       "Id": "f23cd00a-8deb-45ea-80d8-5119fb51d52c",
-      "Command": "input/Pong/Pong.asm"
+      "Command": "input/Add/Add.asm"
     }
   ]
 }

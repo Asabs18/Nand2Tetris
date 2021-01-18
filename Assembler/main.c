@@ -9,7 +9,7 @@
 
 #define OUTSIZE 20
 int main(int argc, char** argv) {
-	//initialize_debugging();
+	initialize_debugging();
 	jump_t jumpVals[] = { nulljump, JGT, JEQ, JGE, JLT, JNE, JLE, JMP };
 	symbolTable_p jumpTable = createSymbolTable();
 	jumpTable = fillJumpTable(jumpTable, jumpVals);
@@ -74,5 +74,5 @@ int main(int argc, char** argv) {
 	destroySymbolTable(destTable);
 	destroySymbolTable(symbTable);
 	//destroyCommand(currCommand);
-	//terminate_debugging();
+	terminate_debugging();
 }

@@ -3,10 +3,6 @@
   "Id": "896395c9-a8fc-4bab-a1b2-dc4033da46fb",
   "Items": [
     {
-      "Id": "0b2ecc7c-2b3f-4960-bbf7-3a36f7e482fa",
-      "Command": "--show-stderr"
-    },
-    {
       "Id": "21afc4f6-1df9-483e-baf7-08314d4866d9",
       "Command": "--list"
     },
