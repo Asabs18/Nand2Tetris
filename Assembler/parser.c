@@ -33,7 +33,7 @@ the translation from hex to binary will be the only remaining issue for
 parsed commands
 */
 
-static symbolTable_p fillDestTable(symbolTable_p destTable, dest_t vals[]) {
+symbolTable_p fillDestTable(symbolTable_p destTable, dest_t vals[]) {
 	//Adds all real values for a Dest command
 	insert(destTable, "null", &vals[0]);
 	insert(destTable, "M", &vals[1]);
@@ -46,12 +46,7 @@ static symbolTable_p fillDestTable(symbolTable_p destTable, dest_t vals[]) {
 	return destTable;
 }
 
-cInstruct_t dest(command_t* currCommand, cInstruct_t instruction, int endAt) {
-	static dest_t vals[] = { nulldest, Mdest, Ddest, MD, Adest, AM, AD, AMD };
-	//creates a symbol table for dest values
-	symbolTable_p destTable = createSymbolTable();
-	//fills the dest symbol table
-	destTable = fillDestTable(destTable, vals);
+cInstruct_t dest(command_t* currCommand, cInstruct_t instruction, int endAt, symbolTable_p table) {
 	char dest[MAXSIZE];
 	int index = 0;
 	//goes from 0 - endAt in command and putting each char in a buffer for the dest part of the command
@@ -61,19 +56,18 @@ cInstruct_t dest(command_t* currCommand, cInstruct_t instruction, int endAt) {
 	}
 	dest[index] = '\0';
 	//if the past in value is in the dest table put the value in instruction.dest
-	if (getVal(destTable, dest) != NULL) {
-		symbol_p output = getVal(destTable, dest);
+	if (getVal(table, dest) != NULL) {
+		symbol_p output = getVal(table, dest);
 		assert(output != NULL);
 		instruction.dest = *((int*)output->value);
 	}
 	else {
 		instruction.dest = nulldest;
 	}
-
 	return instruction;
 }
 
-static symbolTable_p fillCompTable(symbolTable_p compTable, comp_t vals[]) {
+symbolTable_p fillCompTable(symbolTable_p compTable, comp_t vals[]) {
 	//fills all the predefined values of the Comp Table
 	insert(compTable, "0", &vals[0]);
 	insert(compTable, "1", &vals[1]);
@@ -107,13 +101,8 @@ static symbolTable_p fillCompTable(symbolTable_p compTable, comp_t vals[]) {
 	return compTable;
 }
 
-cInstruct_t comp(command_t* currCommand, cInstruct_t instruction, int Ceq, int Csc) {
+cInstruct_t comp(command_t* currCommand, cInstruct_t instruction, int Ceq, int Csc, symbolTable_p table) {
 	//creates and adds correct predef values to comp table
-	static comp_t vals[] = { zero, one, negOne, Dcomp, Acomp, notD, notA, negD, negA, Dplus,
-				Aplus, Dminus, Aminus, DplusA, DminusA, AminusD, DandA, DorA, Mcomp, notM,
-				negM, Mplus, Mminus, DplusM, DminusM, MminusD, DandM, DorM, nullcomp };
-	symbolTable_p compTable = createSymbolTable();
-	compTable = fillCompTable(compTable, vals);
 	char comp[MAXSIZE];
 	//creates a start and end variable for when to start and stop looking for comp values in the instruction
 	int start = 0;
@@ -133,16 +122,15 @@ cInstruct_t comp(command_t* currCommand, cInstruct_t instruction, int Ceq, int C
 	}
 	comp[index] = '\0';
 	//get value from comp table and return it
-	if (getVal(compTable, comp) != NULL) {
-		symbol_p output = getVal(compTable, comp);
+	if (getVal(table, comp) != NULL) {
+		symbol_p output = getVal(table, comp);
 		assert(output != NULL);
 		instruction.comp = *((int*)output->value);
 	}
-
 	return instruction;
 }
 
-static symbolTable_p fillJumpTable(symbolTable_p jumpTable, jump_t vals[]) {
+symbolTable_p fillJumpTable(symbolTable_p jumpTable, jump_t vals[]) {
 	//fills jump table with predefined values
 	insert(jumpTable, "null", &vals[0]);
 	insert(jumpTable, "JGT", &vals[1]);
@@ -156,11 +144,8 @@ static symbolTable_p fillJumpTable(symbolTable_p jumpTable, jump_t vals[]) {
 }
 
 
-cInstruct_t jump(command_t* currCommand, cInstruct_t instruction, int startAt) {
+cInstruct_t jump(command_t* currCommand, cInstruct_t instruction, int startAt, symbolTable_p table) {
 	//creates and adds predefined symbols to the jump table
-	jump_t vals[] = { nulljump, JGT, JEQ, JGE, JLT, JNE, JLE, JMP };
-	symbolTable_p jumpTable = createSymbolTable();
-	jumpTable = fillJumpTable(jumpTable, vals);
 	char jump[MAXSIZE];
 	int index = 0;
 	//parse the instruction from startAt to the end of the instruction to look for jump elements
@@ -170,14 +155,14 @@ cInstruct_t jump(command_t* currCommand, cInstruct_t instruction, int startAt) {
 	}
 	jump[index] = '\0';
 	//get correct jump value and return it
-	if (getVal(jumpTable, jump) != NULL) {
-		symbol_p output = getVal(jumpTable, jump);
+	if (getVal(table, jump) != NULL) {
+		symbol_p output = getVal(table, jump);
 		assert(output != NULL);
 		instruction.jump = *((int*)output->value);
 	}
 	return instruction;
 }
-cInstruct_t parseCInstruction(command_t* currCommand) {
+cInstruct_t parseCInstruction(command_t* currCommand, symbolTable_p compTable, symbolTable_p destTable, symbolTable_p jumpTable) {
 	cInstruct_t instruction = { nullcomp, nulldest, nulljump };
 	//vars used to start index values of = and ; to avoid double parsing the instruction
 	int Ceq = 0;
@@ -186,17 +171,17 @@ cInstruct_t parseCInstruction(command_t* currCommand) {
 	for (size_t i = 0; i < strlen(currCommand->command); i++) {
 		//if you find an equal sign, parse the dest part of C instruction
 		if (currCommand->command[i] == '=') {
-			instruction = dest(currCommand, instruction, i);
+			instruction = dest(currCommand, instruction, i, destTable);
 			Ceq = i;
 		}
 		//if you find a semicolon parse the jump part of the C instruction
 		if (currCommand->command[i] == ';') {
-			instruction = jump(currCommand, instruction, i + 1);
+			instruction = jump(currCommand, instruction, i + 1, jumpTable);
 			Csc = i;
 		}
 	}
 	//always parse the comp because it is always there
-	instruction = comp(currCommand, instruction, Ceq, Csc);
+	instruction = comp(currCommand, instruction, Ceq, Csc, compTable);
 
 	return instruction;
 }
@@ -282,7 +267,7 @@ int parseAInstruction(command_t* currCommand, symbolTable_p symbolTable, int mem
 }
 
 
-Instruction_t parse(command_t* currCommand, int pass, symbolTable_p table, int memAddress) {
+Instruction_t parse(command_t* currCommand, int pass, symbolTable_p table, int memAddress, symbolTable_p jumpTable, symbolTable_p destTable, symbolTable_p compTable) {
 	cInstruct_t temp = { nullcomp, nulldest, nulljump };
 	Instruction_t cmdVal = { temp, -1 };
 	if (currCommand->command[strlen(currCommand->command) - 1] == '\n') {
@@ -302,7 +287,7 @@ Instruction_t parse(command_t* currCommand, int pass, symbolTable_p table, int m
 			cmdVal.A = parseAInstruction(currCommand, table, memAddress);
 		}
 		else if (currCommand->type == C) {
-			cmdVal.C = parseCInstruction(currCommand);
+			cmdVal.C = parseCInstruction(currCommand, compTable, destTable, jumpTable);
 		}
 	}
 	return cmdVal;
@@ -339,6 +324,36 @@ symbolTable_p addPredefSymbs(symbolTable_p table) {
 	insert(table, "R14", &values[21]);
 	insert(table, "R15", &values[22]);
 	return table;
+}
+
+#define OUTSIZE 20
+char* outName(char* fullname, char output[]) {
+	int start = 0;
+	int end = 0;
+	char* fileType = ".hack";
+	for (size_t i = 0; i < strlen(fullname); i++) {
+		if (fullname[i] == '.') {
+			end = i;
+			for (size_t j = i; j > 0; j--) {
+				if (fullname[j] == '/') {
+					start = j + 1;
+					break;
+				}
+			}
+			break;
+		}
+	}
+	int i = 0;
+	while (i + start < end) {
+		output[i] = fullname[i + start];
+		i++;
+	}
+	for (size_t j = 0; j < strlen(fileType); j++) {
+		output[i] = fileType[j];
+		i++;
+	}
+	output[i] = '\0';
+	return output;
 }
 
 void destroyCommand(command_t* command) {

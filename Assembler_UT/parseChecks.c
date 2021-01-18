@@ -53,7 +53,7 @@ ReturnsCorrectComp(const MunitParameter params[], void* data) {
 
 
 	//Act
-	cInstruct_t instruction = parseCInstruction(currCommand);
+	cInstruct_t instruction = parseCInstruction(currCommand, , , );
 
 	//Assert
 	munit_assert(instruction.comp == zero);
@@ -67,7 +67,7 @@ ReturnsCorrectDest(const MunitParameter params[], void* data) {
 	currCommand->command = "0;JMP";
 
 	//Act
-	cInstruct_t instruction = parseCInstruction(currCommand);
+	cInstruct_t instruction = parseCInstruction(currCommand, , , );
 
 	//Assert
 	munit_assert(instruction.dest == nulldest);
@@ -81,7 +81,7 @@ ReturnsCorrectJump(const MunitParameter params[], void* data) {
 	currCommand->command = "0;JMP";
 
 	//Act
-	cInstruct_t instruction = parseCInstruction(currCommand);
+	cInstruct_t instruction = parseCInstruction(currCommand, , , );
 
 	//Assert
 	munit_assert(instruction.jump == JMP);
@@ -96,7 +96,7 @@ ReturnsCorrectComp2(const MunitParameter params[], void* data) {
 	currCommand->command = stripWhiteSpace(currCommand->command);
 
 	//Act
-	cInstruct_t instruction = parseCInstruction(currCommand);
+	cInstruct_t instruction = parseCInstruction(currCommand, , , );
 
 	//Assert
 	munit_assert(instruction.comp == Dcomp);
@@ -111,7 +111,7 @@ ReturnsCorrectDest2(const MunitParameter params[], void* data) {
 	currCommand->command = stripWhiteSpace(currCommand->command);
 
 	//Act
-	cInstruct_t instruction = parseCInstruction(currCommand);
+	cInstruct_t instruction = parseCInstruction(currCommand, , , );
 
 	//Assert
 	munit_assert(instruction.dest == Mdest);
@@ -126,7 +126,7 @@ ReturnsCorrectJump2(const MunitParameter params[], void* data) {
 	currCommand->command = stripWhiteSpace(currCommand->command);
 
 	//Act
-	cInstruct_t instruction = parseCInstruction(currCommand);
+	cInstruct_t instruction = parseCInstruction(currCommand, , , );
 
 	//Assert
 	munit_assert(instruction.jump == JGT);
@@ -142,7 +142,7 @@ ReturnsCorrectComp3(const MunitParameter params[], void* data) {
 	currCommand->command = stripWhiteSpace(currCommand->command);
 
 	//Act
-	cInstruct_t instruction = parseCInstruction(currCommand);
+	cInstruct_t instruction = parseCInstruction(currCommand, , , );
 
 	//Assert
 	munit_assert(instruction.comp == negOne);
@@ -158,7 +158,7 @@ ReturnsCorrectDest3(const MunitParameter params[], void* data) {
 	currCommand->command = stripWhiteSpace(currCommand->command);
 
 	//Act
-	cInstruct_t instruction = parseCInstruction(currCommand);
+	cInstruct_t instruction = parseCInstruction(currCommand, , , );
 
 	//Assert
 	munit_assert(instruction.dest == MD);
@@ -174,7 +174,7 @@ ReturnsCorrectJump3(const MunitParameter params[], void* data) {
 	currCommand->command = stripWhiteSpace(currCommand->command);
 
 	//Act
-	cInstruct_t instruction = parseCInstruction(currCommand);
+	cInstruct_t instruction = parseCInstruction(currCommand, , , );
 
 	//Assert
 	munit_assert(instruction.jump == JMP);
@@ -192,7 +192,7 @@ IdentifiesCCommandCorrectly(const MunitParameter params[], void* data) {
 	int pass = 2;
 
 	//Act
-	Instruction_t instruction = parse(&currCommand, pass, table, 10);
+	Instruction_t instruction = parse(&currCommand, pass, table, 10, , , );
 
 	//Assert
 	munit_assert(instruction.C.comp != nullcomp && instruction.C.dest != nulldest && instruction.C.jump != nulljump);
@@ -210,7 +210,7 @@ IdentifiesACommandCorrectly(const MunitParameter params[], void* data) {
 	int pass = 2;
 
 	//Act
-	Instruction_t instruction = parse(&currCommand, pass, table, 10);
+	Instruction_t instruction = parse(&currCommand, pass, table, 10, , , );
 
 	//Assert
 	munit_assert(instruction.A != 0);
@@ -228,7 +228,7 @@ IdentifiesLCommandCorrectly(const MunitParameter params[], void* data) {
 	int pass = 1;
 
 	//Act
-	Instruction_t instruction = parse(&currCommand, pass, table, 10);
+	Instruction_t instruction = parse(&currCommand, pass, table, 10, , , );
 
 	//Assert
 	munit_assert(instruction.C.comp == nullcomp && instruction.A == -2);
@@ -246,7 +246,7 @@ destReturnsCorrectVal(const MunitParameter params[], void* data) {
 
 	//Act
 	cInstruct_t instruction = { nullcomp, nulldest, nulljump };
-	instruction = dest(currCommand, instruction, destEndIndex);
+	instruction = dest(currCommand, instruction, destEndIndex, );
 
 	//Assert
 	munit_assert(instruction.dest == Mdest);
@@ -265,7 +265,7 @@ compReturnsCorrectVal(const MunitParameter params[], void* data) {
 
 	//Act
 	cInstruct_t instruction = { nullcomp, Mdest, JMP };
-	instruction = comp(currCommand, instruction, Ceq, Csc);
+	instruction = comp(currCommand, instruction, Ceq, Csc, );
 
 	//Assert
 	munit_assert(instruction.comp == Dcomp);
@@ -283,7 +283,7 @@ jumpReturnsCorrectVal(const MunitParameter params[], void* data) {
 
 	//Act
 	cInstruct_t instruction = { nullcomp, nulldest, nulljump };
-	instruction = jump(currCommand, instruction, jumpStartIndex);
+	instruction = jump(currCommand, instruction, jumpStartIndex, );
 
 	//Assert
 	munit_assert(instruction.jump == JGT);

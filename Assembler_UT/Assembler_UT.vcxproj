@@ -144,7 +144,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\munit-master\munit.c" />
+    <ClCompile Include="..\..\munit-master\munit.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MUNIT_TEST_NAME_LEN=70;</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MUNIT_TEST_NAME_LEN=70;</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">MUNIT_TEST_NAME_LEN=70;</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MUNIT_TEST_NAME_LEN=70;</PreprocessorDefinitions>
+    </ClCompile>
     <ClCompile Include="..\Assembler\codeGen.c" />
     <ClCompile Include="..\Assembler\parser.c" />
     <ClCompile Include="..\Assembler\symbol.c" />

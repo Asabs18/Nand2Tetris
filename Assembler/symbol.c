@@ -11,6 +11,11 @@
 
 //frees all of the passed in memory
 void destroySymbolTable(symbolTable_p table) {
+	symbol_p s;
+	symbol_p tmp;
+	HASH_ITER(hh, table->table, s, tmp) {
+		destroySymbol(s);
+	}
 	free(table);
 }
 
