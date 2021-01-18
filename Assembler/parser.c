@@ -46,11 +46,11 @@ symbolTable_p fillDestTable(symbolTable_p destTable, dest_t vals[]) {
 	return destTable;
 }
 
-cInstruct_t dest(command_t* currCommand, cInstruct_t instruction, int endAt, symbolTable_p table) {
+cInstruct_t dest(command_t* currCommand, cInstruct_t instruction, size_t endAt, symbolTable_p table) {
 	char dest[MAXSIZE];
 	int index = 0;
 	//goes from 0 - endAt in command and putting each char in a buffer for the dest part of the command
-	for (int j = 0; j < endAt; j++) {
+	for (size_t j = 0; j < endAt; j++) {
 		dest[j] = currCommand->command[j];
 		index++;
 	}
@@ -101,12 +101,12 @@ symbolTable_p fillCompTable(symbolTable_p compTable, comp_t vals[]) {
 	return compTable;
 }
 
-cInstruct_t comp(command_t* currCommand, cInstruct_t instruction, int Ceq, int Csc, symbolTable_p table) {
+cInstruct_t comp(command_t* currCommand, cInstruct_t instruction, size_t Ceq, size_t Csc, symbolTable_p table) {
 	//creates and adds correct predef values to comp table
 	char comp[MAXSIZE];
 	//creates a start and end variable for when to start and stop looking for comp values in the instruction
-	int start = 0;
-	int end = strlen(currCommand->command);
+	size_t start = 0;
+	size_t end = strlen(currCommand->command);
 	//if there are passed in start and end values use those, otherwise parse the whole instruction
 	if (Ceq > 0) {
 		start = Ceq + 1;
@@ -116,7 +116,7 @@ cInstruct_t comp(command_t* currCommand, cInstruct_t instruction, int Ceq, int C
 	}
 	//parse instruction to find comp components 
 	int index = 0;
-	for (int i = start; i < end; i++) {
+	for (size_t i = start; i < end; i++) {
 		comp[index] = currCommand->command[i];
 		index++;
 	}
@@ -144,7 +144,7 @@ symbolTable_p fillJumpTable(symbolTable_p jumpTable, jump_t vals[]) {
 }
 
 
-cInstruct_t jump(command_t* currCommand, cInstruct_t instruction, int startAt, symbolTable_p table) {
+cInstruct_t jump(command_t* currCommand, cInstruct_t instruction, size_t startAt, symbolTable_p table) {
 	//creates and adds predefined symbols to the jump table
 	char jump[MAXSIZE];
 	int index = 0;
@@ -165,8 +165,8 @@ cInstruct_t jump(command_t* currCommand, cInstruct_t instruction, int startAt, s
 cInstruct_t parseCInstruction(command_t* currCommand, symbolTable_p compTable, symbolTable_p destTable, symbolTable_p jumpTable) {
 	cInstruct_t instruction = { nullcomp, nulldest, nulljump };
 	//vars used to start index values of = and ; to avoid double parsing the instruction
-	int Ceq = 0;
-	int Csc = 0;
+	size_t Ceq = 0;
+	size_t Csc = 0;
 	//parse instruction for key values
 	for (size_t i = 0; i < strlen(currCommand->command); i++) {
 		//if you find an equal sign, parse the dest part of C instruction
@@ -188,10 +188,10 @@ cInstruct_t parseCInstruction(command_t* currCommand, symbolTable_p compTable, s
 bool parseLInstruction(command_t* currCommand, symbolTable_p table, int memAddress) {
 	assert(currCommand->type == L);
 	char cmd[MAXSIZE];
-	int Cmdlen = strlen(currCommand->command);
+	size_t Cmdlen = strlen(currCommand->command);
 	//parse out the parenthesis in the L instruction 
 	if (currCommand->command[0] == '(' && currCommand->command[Cmdlen - 1] == ')') {
-		for (int i = 1; i < Cmdlen; i++) {
+		for (size_t i = 1; i < Cmdlen; i++) {
 			cmd[i - 1] = currCommand->command[i];
 		}
 	}
@@ -230,11 +230,11 @@ bool isNum(char* command) {
 int parseAInstruction(command_t* currCommand, symbolTable_p symbolTable, int memAddress) {
 	int val = 0;
 	char cmd[MAXSIZE];
-	int Cmdlen = strlen(currCommand->command);
+	size_t Cmdlen = strlen(currCommand->command);
 	//checks if the command is an A instruct
 	if (currCommand->command[0] == '@') {
 		//copies the string to a new var without the leading @
-		for (int i = 1; i < Cmdlen; i++) {
+		for (size_t i = 1; i < Cmdlen; i++) {
 			cmd[i - 1] = currCommand->command[i];
 		}
 		cmd[Cmdlen - 1] = '\0';
@@ -328,8 +328,8 @@ symbolTable_p addPredefSymbs(symbolTable_p table) {
 
 #define OUTSIZE 20
 char* outName(char* fullname, char output[]) {
-	int start = 0;
-	int end = 0;
+	size_t start = 0;
+	size_t end = 0;
 	char* fileType = ".hack";
 	for (size_t i = 0; i < strlen(fullname); i++) {
 		if (fullname[i] == '.') {
@@ -343,7 +343,7 @@ char* outName(char* fullname, char output[]) {
 			break;
 		}
 	}
-	int i = 0;
+	size_t i = 0;
 	while (i + start < end) {
 		output[i] = fullname[i + start];
 		i++;

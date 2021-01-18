@@ -28,7 +28,7 @@ char* createCommand(FILE* file) {
 	return command;
 }
 
-char* stripComments(char* command, int i) {
+char* stripComments(char* command, size_t i) {
 	//removes comments from the string
 	static char newCommand[MAXSIZE];
 	assert(i < MAXSIZE);
@@ -37,7 +37,7 @@ char* stripComments(char* command, int i) {
 	//puts the new line character at the end of the string
 	newCommand[i] = '\n';
 	//removes any white space before the newline
-	for (int j = i; j > 0; j--) {
+	for (size_t j = i; j > 0; j--) {
 		if (newCommand[j] == ' ') {
 			newCommand[j] = '\n';
 			i = j;
@@ -50,9 +50,9 @@ char* stripComments(char* command, int i) {
 	return (char*)newCommand;
 }
 
-char* checkComments(char* command, int size) {
+char* checkComments(char* command, size_t size) {
 	//Checks if the currCommand is or has a comment
-	for (int i = 0; i < size; i++) {
+	for (size_t i = 0; i < size; i++) {
 		//creates a pair of chars that go through the string and find back to back '/'
 		char currChar = command[i];
 		char nextChar = command[i + 1];
@@ -147,7 +147,7 @@ command_t* updateCommand(command_t* currCommand, FILE* readFrom) {
 	currCommand->command = createCommand(readFrom);
 	currCommand->command = stripWhiteSpace(currCommand->command);
 	//gets the length of the command
-	int cmdLen = strlen(currCommand->command);
+	size_t cmdLen = strlen(currCommand->command);
 	//updates the line number
 	//copies the command into a command_t data structure
 	if (currCommand->command != NULL) {
@@ -162,7 +162,7 @@ command_t* updateCommand(command_t* currCommand, FILE* readFrom) {
 
 //returns the command type of the current command, A, C or L command 
 command_t* commandType(command_t* currCommand) {
-	int size;
+	size_t size;
 	//gets the size of the command
 	size = strlen(currCommand->command);
 	int lastPlace = 1;

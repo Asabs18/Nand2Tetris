@@ -18,6 +18,6 @@ char* createCommand(FILE* readFrom);
 //gets rid of all whitespace in a command(char*)
 char* stripWhiteSpace(char* command);
 //Checks if the current command had a comment, if so calls helper functions to remove it
-char* checkComments(char* command, int size);
+char* checkComments(char* command, size_t size);
 //removes comments from a command
-char* stripComments(char* command, int i);
+char* stripComments(char* command, size_t i);

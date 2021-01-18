@@ -50,13 +50,26 @@ ReturnsCorrectComp(const MunitParameter params[], void* data) {
 	//Arrange
 	command_t* currCommand = (command_t*)data;
 	currCommand->command = "0;JMP";
-
+	jump_t jumpVals[] = { nulljump, JGT, JEQ, JGE, JLT, JNE, JLE, JMP };
+	symbolTable_p jumpTable = createSymbolTable();
+	jumpTable = fillJumpTable(jumpTable, jumpVals);
+	static comp_t compVals[] = { zero, one, negOne, Dcomp, Acomp, notD, notA, negD, negA, Dplus,
+			Aplus, Dminus, Aminus, DplusA, DminusA, AminusD, DandA, DorA, Mcomp, notM,
+			negM, Mplus, Mminus, DplusM, DminusM, MminusD, DandM, DorM, nullcomp };
+	symbolTable_p compTable = createSymbolTable();
+	compTable = fillCompTable(compTable, compVals);
+	static dest_t destVals[] = { nulldest, Mdest, Ddest, MD, Adest, AM, AD, AMD };
+	symbolTable_p destTable = createSymbolTable();
+	destTable = fillDestTable(destTable, destVals);
 
 	//Act
-	cInstruct_t instruction = parseCInstruction(currCommand, , , );
+	cInstruct_t instruction = parseCInstruction(currCommand, compTable, destTable, jumpTable);
 
 	//Assert
 	munit_assert(instruction.comp == zero);
+	destroySymbolTable(compTable);
+	destroySymbolTable(destTable);
+	destroySymbolTable(jumpTable);
 	return MUNIT_OK;
 }
 
@@ -65,12 +78,26 @@ ReturnsCorrectDest(const MunitParameter params[], void* data) {
 	//Arrange
 	command_t* currCommand = (command_t*)data;
 	currCommand->command = "0;JMP";
+	jump_t jumpVals[] = { nulljump, JGT, JEQ, JGE, JLT, JNE, JLE, JMP };
+	symbolTable_p jumpTable = createSymbolTable();
+	jumpTable = fillJumpTable(jumpTable, jumpVals);
+	static comp_t compVals[] = { zero, one, negOne, Dcomp, Acomp, notD, notA, negD, negA, Dplus,
+			Aplus, Dminus, Aminus, DplusA, DminusA, AminusD, DandA, DorA, Mcomp, notM,
+			negM, Mplus, Mminus, DplusM, DminusM, MminusD, DandM, DorM, nullcomp };
+	symbolTable_p compTable = createSymbolTable();
+	compTable = fillCompTable(compTable, compVals);
+	static dest_t destVals[] = { nulldest, Mdest, Ddest, MD, Adest, AM, AD, AMD };
+	symbolTable_p destTable = createSymbolTable();
+	destTable = fillDestTable(destTable, destVals);
 
 	//Act
-	cInstruct_t instruction = parseCInstruction(currCommand, , , );
+	cInstruct_t instruction = parseCInstruction(currCommand, compTable, destTable, jumpTable);
 
 	//Assert
 	munit_assert(instruction.dest == nulldest);
+	destroySymbolTable(compTable);
+	destroySymbolTable(destTable);
+	destroySymbolTable(jumpTable);
 	return MUNIT_OK;
 }
 
@@ -79,12 +106,25 @@ ReturnsCorrectJump(const MunitParameter params[], void* data) {
 	//Arrange
 	command_t* currCommand = (command_t*)data;
 	currCommand->command = "0;JMP";
-
+	jump_t jumpVals[] = { nulljump, JGT, JEQ, JGE, JLT, JNE, JLE, JMP };
+	symbolTable_p jumpTable = createSymbolTable();
+	jumpTable = fillJumpTable(jumpTable, jumpVals);
+	static comp_t compVals[] = { zero, one, negOne, Dcomp, Acomp, notD, notA, negD, negA, Dplus,
+			Aplus, Dminus, Aminus, DplusA, DminusA, AminusD, DandA, DorA, Mcomp, notM,
+			negM, Mplus, Mminus, DplusM, DminusM, MminusD, DandM, DorM, nullcomp };
+	symbolTable_p compTable = createSymbolTable();
+	compTable = fillCompTable(compTable, compVals);
+	static dest_t destVals[] = { nulldest, Mdest, Ddest, MD, Adest, AM, AD, AMD };
+	symbolTable_p destTable = createSymbolTable();
+	destTable = fillDestTable(destTable, destVals);
 	//Act
-	cInstruct_t instruction = parseCInstruction(currCommand, , , );
+	cInstruct_t instruction = parseCInstruction(currCommand, compTable, destTable, jumpTable);
 
 	//Assert
 	munit_assert(instruction.jump == JMP);
+	destroySymbolTable(compTable);
+	destroySymbolTable(destTable);
+	destroySymbolTable(jumpTable);
 	return MUNIT_OK;
 }
 
@@ -94,12 +134,25 @@ ReturnsCorrectComp2(const MunitParameter params[], void* data) {
 	command_t* currCommand = (command_t*)data;
 	currCommand->command = "M = D; JGT";
 	currCommand->command = stripWhiteSpace(currCommand->command);
-
+	jump_t jumpVals[] = { nulljump, JGT, JEQ, JGE, JLT, JNE, JLE, JMP };
+	symbolTable_p jumpTable = createSymbolTable();
+	jumpTable = fillJumpTable(jumpTable, jumpVals);
+	static comp_t compVals[] = { zero, one, negOne, Dcomp, Acomp, notD, notA, negD, negA, Dplus,
+			Aplus, Dminus, Aminus, DplusA, DminusA, AminusD, DandA, DorA, Mcomp, notM,
+			negM, Mplus, Mminus, DplusM, DminusM, MminusD, DandM, DorM, nullcomp };
+	symbolTable_p compTable = createSymbolTable();
+	compTable = fillCompTable(compTable, compVals);
+	static dest_t destVals[] = { nulldest, Mdest, Ddest, MD, Adest, AM, AD, AMD };
+	symbolTable_p destTable = createSymbolTable();
+	destTable = fillDestTable(destTable, destVals);
 	//Act
-	cInstruct_t instruction = parseCInstruction(currCommand, , , );
+	cInstruct_t instruction = parseCInstruction(currCommand, compTable, destTable, jumpTable);
 
 	//Assert
 	munit_assert(instruction.comp == Dcomp);
+	destroySymbolTable(compTable);
+	destroySymbolTable(destTable);
+	destroySymbolTable(jumpTable);
 	return MUNIT_OK;
 }
 
@@ -109,12 +162,25 @@ ReturnsCorrectDest2(const MunitParameter params[], void* data) {
 	command_t* currCommand = (command_t*)data;
 	currCommand->command = "M = D; JGT";
 	currCommand->command = stripWhiteSpace(currCommand->command);
-
+	jump_t jumpVals[] = { nulljump, JGT, JEQ, JGE, JLT, JNE, JLE, JMP };
+	symbolTable_p jumpTable = createSymbolTable();
+	jumpTable = fillJumpTable(jumpTable, jumpVals);
+	static comp_t compVals[] = { zero, one, negOne, Dcomp, Acomp, notD, notA, negD, negA, Dplus,
+			Aplus, Dminus, Aminus, DplusA, DminusA, AminusD, DandA, DorA, Mcomp, notM,
+			negM, Mplus, Mminus, DplusM, DminusM, MminusD, DandM, DorM, nullcomp };
+	symbolTable_p compTable = createSymbolTable();
+	compTable = fillCompTable(compTable, compVals);
+	static dest_t destVals[] = { nulldest, Mdest, Ddest, MD, Adest, AM, AD, AMD };
+	symbolTable_p destTable = createSymbolTable();
+	destTable = fillDestTable(destTable, destVals);
 	//Act
-	cInstruct_t instruction = parseCInstruction(currCommand, , , );
+	cInstruct_t instruction = parseCInstruction(currCommand, compTable, destTable, jumpTable);
 
 	//Assert
 	munit_assert(instruction.dest == Mdest);
+	destroySymbolTable(compTable);
+	destroySymbolTable(destTable);
+	destroySymbolTable(jumpTable);
 	return MUNIT_OK;
 }
 
@@ -124,12 +190,25 @@ ReturnsCorrectJump2(const MunitParameter params[], void* data) {
 	command_t* currCommand = (command_t*)data;
 	currCommand->command = "M = D; JGT";
 	currCommand->command = stripWhiteSpace(currCommand->command);
-
+	jump_t jumpVals[] = { nulljump, JGT, JEQ, JGE, JLT, JNE, JLE, JMP };
+	symbolTable_p jumpTable = createSymbolTable();
+	jumpTable = fillJumpTable(jumpTable, jumpVals);
+	static comp_t compVals[] = { zero, one, negOne, Dcomp, Acomp, notD, notA, negD, negA, Dplus,
+			Aplus, Dminus, Aminus, DplusA, DminusA, AminusD, DandA, DorA, Mcomp, notM,
+			negM, Mplus, Mminus, DplusM, DminusM, MminusD, DandM, DorM, nullcomp };
+	symbolTable_p compTable = createSymbolTable();
+	compTable = fillCompTable(compTable, compVals);
+	static dest_t destVals[] = { nulldest, Mdest, Ddest, MD, Adest, AM, AD, AMD };
+	symbolTable_p destTable = createSymbolTable();
+	destTable = fillDestTable(destTable, destVals);
 	//Act
-	cInstruct_t instruction = parseCInstruction(currCommand, , , );
+	cInstruct_t instruction = parseCInstruction(currCommand, compTable, destTable, jumpTable);
 
 	//Assert
 	munit_assert(instruction.jump == JGT);
+	destroySymbolTable(compTable);
+	destroySymbolTable(destTable);
+	destroySymbolTable(jumpTable);
 	return MUNIT_OK;
 }
 
@@ -140,12 +219,25 @@ ReturnsCorrectComp3(const MunitParameter params[], void* data) {
 	currCommand->type = C;
 	currCommand->command = "MD = -1; JMP";
 	currCommand->command = stripWhiteSpace(currCommand->command);
-
+	jump_t jumpVals[] = { nulljump, JGT, JEQ, JGE, JLT, JNE, JLE, JMP };
+	symbolTable_p jumpTable = createSymbolTable();
+	jumpTable = fillJumpTable(jumpTable, jumpVals);
+	static comp_t compVals[] = { zero, one, negOne, Dcomp, Acomp, notD, notA, negD, negA, Dplus,
+			Aplus, Dminus, Aminus, DplusA, DminusA, AminusD, DandA, DorA, Mcomp, notM,
+			negM, Mplus, Mminus, DplusM, DminusM, MminusD, DandM, DorM, nullcomp };
+	symbolTable_p compTable = createSymbolTable();
+	compTable = fillCompTable(compTable, compVals);
+	static dest_t destVals[] = { nulldest, Mdest, Ddest, MD, Adest, AM, AD, AMD };
+	symbolTable_p destTable = createSymbolTable();
+	destTable = fillDestTable(destTable, destVals);
 	//Act
-	cInstruct_t instruction = parseCInstruction(currCommand, , , );
+	cInstruct_t instruction = parseCInstruction(currCommand, compTable, destTable, jumpTable);
 
 	//Assert
 	munit_assert(instruction.comp == negOne);
+	destroySymbolTable(compTable);
+	destroySymbolTable(destTable);
+	destroySymbolTable(jumpTable);
 	return MUNIT_OK;
 }
 
@@ -157,11 +249,25 @@ ReturnsCorrectDest3(const MunitParameter params[], void* data) {
 	currCommand->command = "MD = -1; JMP";
 	currCommand->command = stripWhiteSpace(currCommand->command);
 
+	jump_t jumpVals[] = { nulljump, JGT, JEQ, JGE, JLT, JNE, JLE, JMP };
+	symbolTable_p jumpTable = createSymbolTable();
+	jumpTable = fillJumpTable(jumpTable, jumpVals);
+	static comp_t compVals[] = { zero, one, negOne, Dcomp, Acomp, notD, notA, negD, negA, Dplus,
+			Aplus, Dminus, Aminus, DplusA, DminusA, AminusD, DandA, DorA, Mcomp, notM,
+			negM, Mplus, Mminus, DplusM, DminusM, MminusD, DandM, DorM, nullcomp };
+	symbolTable_p compTable = createSymbolTable();
+	compTable = fillCompTable(compTable, compVals);
+	static dest_t destVals[] = { nulldest, Mdest, Ddest, MD, Adest, AM, AD, AMD };
+	symbolTable_p destTable = createSymbolTable();
+	destTable = fillDestTable(destTable, destVals);
 	//Act
-	cInstruct_t instruction = parseCInstruction(currCommand, , , );
+	cInstruct_t instruction = parseCInstruction(currCommand, compTable, destTable, jumpTable);
 
 	//Assert
 	munit_assert(instruction.dest == MD);
+	destroySymbolTable(compTable);
+	destroySymbolTable(destTable);
+	destroySymbolTable(jumpTable);
 	return MUNIT_OK;
 }
 
@@ -173,11 +279,25 @@ ReturnsCorrectJump3(const MunitParameter params[], void* data) {
 	currCommand->command = "MD = -1; JMP";
 	currCommand->command = stripWhiteSpace(currCommand->command);
 
+	jump_t jumpVals[] = { nulljump, JGT, JEQ, JGE, JLT, JNE, JLE, JMP };
+	symbolTable_p jumpTable = createSymbolTable();
+	jumpTable = fillJumpTable(jumpTable, jumpVals);
+	static comp_t compVals[] = { zero, one, negOne, Dcomp, Acomp, notD, notA, negD, negA, Dplus,
+			Aplus, Dminus, Aminus, DplusA, DminusA, AminusD, DandA, DorA, Mcomp, notM,
+			negM, Mplus, Mminus, DplusM, DminusM, MminusD, DandM, DorM, nullcomp };
+	symbolTable_p compTable = createSymbolTable();
+	compTable = fillCompTable(compTable, compVals);
+	static dest_t destVals[] = { nulldest, Mdest, Ddest, MD, Adest, AM, AD, AMD };
+	symbolTable_p destTable = createSymbolTable();
+	destTable = fillDestTable(destTable, destVals);
 	//Act
-	cInstruct_t instruction = parseCInstruction(currCommand, , , );
+	cInstruct_t instruction = parseCInstruction(currCommand, compTable, destTable, jumpTable);
 
 	//Assert
 	munit_assert(instruction.jump == JMP);
+	destroySymbolTable(compTable);
+	destroySymbolTable(destTable);
+	destroySymbolTable(jumpTable);
 	return MUNIT_OK;
 }
 
@@ -190,12 +310,26 @@ IdentifiesCCommandCorrectly(const MunitParameter params[], void* data) {
 	int values[] = { 16384, 24576, 0, 1, 2, 3, 4 };
 	table = addPredefSymbs(table);
 	int pass = 2;
+	jump_t jumpVals[] = { nulljump, JGT, JEQ, JGE, JLT, JNE, JLE, JMP };
+	symbolTable_p jumpTable = createSymbolTable();
+	jumpTable = fillJumpTable(jumpTable, jumpVals);
+	static comp_t compVals[] = { zero, one, negOne, Dcomp, Acomp, notD, notA, negD, negA, Dplus,
+			Aplus, Dminus, Aminus, DplusA, DminusA, AminusD, DandA, DorA, Mcomp, notM,
+			negM, Mplus, Mminus, DplusM, DminusM, MminusD, DandM, DorM, nullcomp };
+	symbolTable_p compTable = createSymbolTable();
+	compTable = fillCompTable(compTable, compVals);
+	static dest_t destVals[] = { nulldest, Mdest, Ddest, MD, Adest, AM, AD, AMD };
+	symbolTable_p destTable = createSymbolTable();
+	destTable = fillDestTable(destTable, destVals);
 
 	//Act
-	Instruction_t instruction = parse(&currCommand, pass, table, 10, , , );
+	Instruction_t instruction = parse(&currCommand, pass, table, 10, jumpTable, destTable, compTable);
 
 	//Assert
 	munit_assert(instruction.C.comp != nullcomp && instruction.C.dest != nulldest && instruction.C.jump != nulljump);
+	destroySymbolTable(compTable);
+	destroySymbolTable(destTable);
+	destroySymbolTable(jumpTable);
 	return MUNIT_OK;
 }
 
@@ -208,12 +342,26 @@ IdentifiesACommandCorrectly(const MunitParameter params[], void* data) {
 	int values[] = { 16384, 24576, 0, 1, 2, 3, 4 };
 	table = addPredefSymbs(table);
 	int pass = 2;
+	jump_t jumpVals[] = { nulljump, JGT, JEQ, JGE, JLT, JNE, JLE, JMP };
+	symbolTable_p jumpTable = createSymbolTable();
+	jumpTable = fillJumpTable(jumpTable, jumpVals);
+	static comp_t compVals[] = { zero, one, negOne, Dcomp, Acomp, notD, notA, negD, negA, Dplus,
+			Aplus, Dminus, Aminus, DplusA, DminusA, AminusD, DandA, DorA, Mcomp, notM,
+			negM, Mplus, Mminus, DplusM, DminusM, MminusD, DandM, DorM, nullcomp };
+	symbolTable_p compTable = createSymbolTable();
+	compTable = fillCompTable(compTable, compVals);
+	static dest_t destVals[] = { nulldest, Mdest, Ddest, MD, Adest, AM, AD, AMD };
+	symbolTable_p destTable = createSymbolTable();
+	destTable = fillDestTable(destTable, destVals);
 
 	//Act
-	Instruction_t instruction = parse(&currCommand, pass, table, 10, , , );
+	Instruction_t instruction = parse(&currCommand, pass, table, 10, jumpTable, destTable, compTable);
 
 	//Assert
 	munit_assert(instruction.A != 0);
+	destroySymbolTable(compTable);
+	destroySymbolTable(destTable);
+	destroySymbolTable(jumpTable);
 	return MUNIT_OK;
 }
 
@@ -226,12 +374,26 @@ IdentifiesLCommandCorrectly(const MunitParameter params[], void* data) {
 	int values[] = { 16384, 24576, 0, 1, 2, 3, 4 };
 	table = addPredefSymbs(table);
 	int pass = 1;
+	jump_t jumpVals[] = { nulljump, JGT, JEQ, JGE, JLT, JNE, JLE, JMP };
+	symbolTable_p jumpTable = createSymbolTable();
+	jumpTable = fillJumpTable(jumpTable, jumpVals);
+	static comp_t compVals[] = { zero, one, negOne, Dcomp, Acomp, notD, notA, negD, negA, Dplus,
+			Aplus, Dminus, Aminus, DplusA, DminusA, AminusD, DandA, DorA, Mcomp, notM,
+			negM, Mplus, Mminus, DplusM, DminusM, MminusD, DandM, DorM, nullcomp };
+	symbolTable_p compTable = createSymbolTable();
+	compTable = fillCompTable(compTable, compVals);
+	static dest_t destVals[] = { nulldest, Mdest, Ddest, MD, Adest, AM, AD, AMD };
+	symbolTable_p destTable = createSymbolTable();
+	destTable = fillDestTable(destTable, destVals);
 
 	//Act
-	Instruction_t instruction = parse(&currCommand, pass, table, 10, , , );
+	Instruction_t instruction = parse(&currCommand, pass, table, 10, jumpTable, destTable, compTable);
 
 	//Assert
 	munit_assert(instruction.C.comp == nullcomp && instruction.A == -2);
+	destroySymbolTable(compTable);
+	destroySymbolTable(destTable);
+	destroySymbolTable(jumpTable);
 	return MUNIT_OK;
 }
 
@@ -243,10 +405,13 @@ destReturnsCorrectVal(const MunitParameter params[], void* data) {
 	currCommand->command = "M = D; JGT";
 	currCommand->command = stripWhiteSpace(currCommand->command);
 	int destEndIndex = 1;
+	static dest_t destVals[] = { nulldest, Mdest, Ddest, MD, Adest, AM, AD, AMD };
+	symbolTable_p destTable = createSymbolTable();
+	destTable = fillDestTable(destTable, destVals);
 
 	//Act
 	cInstruct_t instruction = { nullcomp, nulldest, nulljump };
-	instruction = dest(currCommand, instruction, destEndIndex, );
+	instruction = dest(currCommand, instruction, destEndIndex, destTable);
 
 	//Assert
 	munit_assert(instruction.dest == Mdest);
@@ -262,10 +427,15 @@ compReturnsCorrectVal(const MunitParameter params[], void* data) {
 	int Ceq = 1;
 	int Csc = 3;
 	currCommand->command = stripWhiteSpace(currCommand->command);
+	static comp_t compVals[] = { zero, one, negOne, Dcomp, Acomp, notD, notA, negD, negA, Dplus,
+			Aplus, Dminus, Aminus, DplusA, DminusA, AminusD, DandA, DorA, Mcomp, notM,
+			negM, Mplus, Mminus, DplusM, DminusM, MminusD, DandM, DorM, nullcomp };
+	symbolTable_p compTable = createSymbolTable();
+	compTable = fillCompTable(compTable, compVals);
 
 	//Act
 	cInstruct_t instruction = { nullcomp, Mdest, JMP };
-	instruction = comp(currCommand, instruction, Ceq, Csc, );
+	instruction = comp(currCommand, instruction, Ceq, Csc, compTable);
 
 	//Assert
 	munit_assert(instruction.comp == Dcomp);
@@ -280,10 +450,13 @@ jumpReturnsCorrectVal(const MunitParameter params[], void* data) {
 	currCommand->command = "M = D; JGT";
 	currCommand->command = stripWhiteSpace(currCommand->command);
 	int jumpStartIndex = 4;
+	jump_t jumpVals[] = { nulljump, JGT, JEQ, JGE, JLT, JNE, JLE, JMP };
+	symbolTable_p jumpTable = createSymbolTable();
+	jumpTable = fillJumpTable(jumpTable, jumpVals);
 
 	//Act
 	cInstruct_t instruction = { nullcomp, nulldest, nulljump };
-	instruction = jump(currCommand, instruction, jumpStartIndex, );
+	instruction = jump(currCommand, instruction, jumpStartIndex, jumpTable);
 
 	//Assert
 	munit_assert(instruction.jump == JGT);
