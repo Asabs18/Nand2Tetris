@@ -358,5 +358,5 @@ char* outName(char* fullname, char output[]) {
 
 void destroyCommand(command_t* command) {
 	free(command->command);
-	//free(command); //TODO: come back to 
+	free(command);
 }

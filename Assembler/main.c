@@ -26,12 +26,12 @@ int main(int argc, char** argv) {
 	const char* outputFileName = outName(argv[1], output);
 	int pass = 1;
 	Instruction_t instruct;
-	AR_t* advanceOutput = malloc(sizeof(AR_t));
-	advanceOutput->command = malloc(sizeof(command_t));
+	AR_t* advanceOutput = (AR_t*)malloc(sizeof(AR_t));
+	advanceOutput->command = (AR_t*)malloc(sizeof(command_t));
 	symbolTable_p symbTable = createSymbolTable();
 	symbTable = addPredefSymbs(symbTable);
 	FILE* fp = openFile(fileName);
-	command_t* currCommand = malloc(sizeof(command_t));
+	command_t* currCommand = (command_t*)malloc(sizeof(command_t));
 	int memAddress = 0;
 	while (areThereMoreCommands(fp)) {
 		advanceOutput = advancePass1(currCommand, fp);
@@ -73,6 +73,7 @@ int main(int argc, char** argv) {
 	destroySymbolTable(jumpTable);
 	destroySymbolTable(destTable);
 	destroySymbolTable(symbTable);
-	//destroyCommand(currCommand);
+	destroyCommand(currCommand);
+	destroyCommand(advanceOutput);
 	terminate_debugging();
 }
