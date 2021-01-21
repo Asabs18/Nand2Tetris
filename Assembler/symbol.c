@@ -116,6 +116,8 @@ void setValue(symbolTable_p table, symbol_p symb, void* value) {
 		symbol_p oldSymb = NULL;
 		symb->value = value;
 		HASH_REPLACE_STR(table->table, key, symb, oldSymb);
+		// TODO: see if you're leaking symbols
+		oldSymb = oldSymb;
 	}
 }
 //returns a symbols tables size to make the symbol table fully abstract
