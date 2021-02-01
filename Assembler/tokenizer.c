@@ -12,6 +12,15 @@
 #define EMPTYVAL 0
 ///this file contains all function declarations that have to do with parsing or handling the command/// 
 
+AR_t* createAR_t() {
+	return malloc(sizeof(AR_t));
+}
+
+void destroyAR_t(AR_t* advanceOutput) {
+	free(advanceOutput->command);
+	free(advanceOutput);
+}
+
 FILE* openFile(const char* readFrom) {
 	FILE* file;
 	fopen_s(&file, readFrom, "r");
@@ -76,7 +85,7 @@ char* stripWhiteSpace(char* command) {
 	int newCommandIndex = 0;
 	//loops through the command and if it finds whitespace, don't copy it into the buffer
 	for (size_t i = 0; i < strlen(command); i++) {
-		if (command[i] != ' ') {
+		if (command[i] != ' ') { //TODO: check to see if should be call to isspace
 			newCommand[newCommandIndex] = command[i];
 			newCommandIndex++;
 		}
@@ -89,8 +98,8 @@ char* stripWhiteSpace(char* command) {
 
 //moves the current command to the next valid line
 AR_t* advancePass1(command_t* currCommand, FILE* readFrom) {
-	AR_t* output = malloc(sizeof(AR_t));
-	output->command = malloc(sizeof(command_t));
+	AR_t* output = createAR_t();
+	//output->command = malloc(sizeof(command_t));
 	output->addresses = 0;
 	//runs until the return statement is hit in the loop
 	output->command = updateCommand(currCommand, readFrom);
@@ -117,10 +126,11 @@ AR_t* advancePass1(command_t* currCommand, FILE* readFrom) {
 
 //moves the current command to the next valid line
 AR_t* advancePass2(command_t* currCommand, FILE* readFrom) {
-	AR_t* output = malloc(sizeof(AR_t));
-	output->command = malloc(sizeof(command_t));
+	AR_t* output = createAR_t();
+	//output->command = malloc(sizeof(command_t));
 	output->addresses = 0;
 	output->command = updateCommand(currCommand, readFrom);
+	//TODO: add asserts
 	while (true) {
 		//get the next line if the current line is a comment
 		while (output->command->command == NULL || strcmp(output->command->command, "//skip") == 0 || strcmp(output->command->command, "\n") == 0) {
@@ -150,10 +160,19 @@ command_t* updateCommand(command_t* currCommand, FILE* readFrom) {
 	size_t cmdLen = strlen(currCommand->command);
 	//updates the line number
 	//copies the command into a command_t data structure
-	if (currCommand->command != NULL) {
-		//free(currCommand->command);
-	}
+	//if (currCommand->command != NULL) {
+	//	//free(currCommand->command);
+	//}
+	/*_CrtMemState m1;
+	_CrtMemState m2;
+	_CrtMemState m3;
+	_CrtMemCheckpoint(&m1);*/
+	char* temp = currCommand->command;
 	currCommand->command = _strdup(checkComments(currCommand->command, cmdLen));
+	free(temp);
+	//_CrtMemCheckpoint(&m2);
+	//_CrtMemDifference(&m3, &m1, &m2);
+	//_CrtMemDumpStatistics(&m3);
 	//gets the command type of the current command
 	currCommand = commandType(currCommand);
 	//returns the new command

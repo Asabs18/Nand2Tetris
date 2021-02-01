@@ -66,3 +66,7 @@ FILE* openFile(const char* readFrom);
 void destroyCommand(command_t* command);
 //Checks if there are more lines in the file or not
 bool areThereMoreCommands(FILE* readFrom);
+//creates a Advance return
+AR_t* createAR_t();
+//destroy Advance Return
+void destroyAR_t(AR_t* advanceOutput);

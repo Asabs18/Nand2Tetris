@@ -14,6 +14,7 @@ void destroySymbolTable(symbolTable_p table) {
 	symbol_p s;
 	symbol_p tmp;
 	HASH_ITER(hh, table->table, s, tmp) {
+		HASH_DEL(table->table, s);
 		destroySymbol(s);
 	}
 	free(table);
@@ -113,11 +114,8 @@ symbol_p getVal(symbolTable_p table, const char* key) {
 void setValue(symbolTable_p table, symbol_p symb, void* value) {
 	assert(table != NULL);
 	if (symb != NULL) {
-		symbol_p oldSymb = NULL;
 		symb->value = value;
-		HASH_REPLACE_STR(table->table, key, symb, oldSymb);
-		// TODO: see if you're leaking symbols
-		oldSymb = oldSymb;
+		HASH_ADD_STR(table->table, key, symb);
 	}
 }
 //returns a symbols tables size to make the symbol table fully abstract
