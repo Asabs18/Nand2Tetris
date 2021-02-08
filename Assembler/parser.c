@@ -238,7 +238,9 @@ int parseAInstruction(command_t* currCommand, symbolTable_p symbolTable, int mem
 			cmd[i - 1] = currCommand->command[i];
 		}
 		cmd[Cmdlen - 1] = '\0';
+		//TODO: LEAKING MEMORY
 		currCommand->command = _strdup((char*)cmd);
+		//TODO: LEAKING MEMORY
 		int* mem = malloc(sizeof(memAddress));
 		*mem = memAddress;
 		//checks if the string is a number, if so sets the output to the number version of the string
@@ -299,7 +301,6 @@ Instruction_t parse(command_t* currCommand, int pass, symbolTable_p table, int m
 //Adds predefined symbols to the symbol table
 symbolTable_p addPredefSymbs(symbolTable_p table) {
 	static int values[] = { 16384, 24576, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
-	//TODO: Add loop for registers
 	insert(table, "SCREEN", &values[0]);
 	insert(table, "KBD", &values[1]);
 	insert(table, "SP", &values[2]);

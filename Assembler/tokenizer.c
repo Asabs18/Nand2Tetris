@@ -13,6 +13,7 @@
 ///this file contains all function declarations that have to do with parsing or handling the command/// 
 
 AR_t* createAR_t() {
+	//TODO: LEAKING MEMORY
 	return malloc(sizeof(AR_t));
 }
 
@@ -85,7 +86,7 @@ char* stripWhiteSpace(char* command) {
 	int newCommandIndex = 0;
 	//loops through the command and if it finds whitespace, don't copy it into the buffer
 	for (size_t i = 0; i < strlen(command); i++) {
-		if (command[i] != ' ') { //TODO: check to see if should be call to isspace
+		if (isspace(command[i]) != 0) {
 			newCommand[newCommandIndex] = command[i];
 			newCommandIndex++;
 		}
@@ -99,12 +100,13 @@ char* stripWhiteSpace(char* command) {
 //moves the current command to the next valid line
 AR_t* advancePass1(command_t* currCommand, FILE* readFrom) {
 	AR_t* output = createAR_t();
-	//output->command = malloc(sizeof(command_t));
 	output->addresses = 0;
 	//runs until the return statement is hit in the loop
 	output->command = updateCommand(currCommand, readFrom);
 	while (true) {
 		//if the current line is a comment get the next line
+		assert(output != NULL);
+		assert(output->command != NULL);
 		while (output->command->command == NULL || strcmp(output->command->command, "//skip") == 0 || strcmp(output->command->command, "\n") == 0) {
 			output->command = updateCommand(currCommand, readFrom);
 		}
@@ -130,9 +132,10 @@ AR_t* advancePass2(command_t* currCommand, FILE* readFrom) {
 	//output->command = malloc(sizeof(command_t));
 	output->addresses = 0;
 	output->command = updateCommand(currCommand, readFrom);
-	//TODO: add asserts
 	while (true) {
 		//get the next line if the current line is a comment
+		assert(output != NULL);
+		assert(output->command != NULL);
 		while (output->command->command == NULL || strcmp(output->command->command, "//skip") == 0 || strcmp(output->command->command, "\n") == 0) {
 			output->command = updateCommand(currCommand, readFrom);
 		}
@@ -166,13 +169,29 @@ command_t* updateCommand(command_t* currCommand, FILE* readFrom) {
 	/*_CrtMemState m1;
 	_CrtMemState m2;
 	_CrtMemState m3;
-	_CrtMemCheckpoint(&m1);*/
+	_CrtMemState m4;
+	_CrtMemState m5;*/
+	//_CrtMemCheckpoint(&m1);
 	char* temp = currCommand->command;
-	currCommand->command = _strdup(checkComments(currCommand->command, cmdLen));
+	char* checkedComment = checkComments(currCommand->command, cmdLen);
+	checkedComment = strcmp(checkedComment, "") == 0 ? NULL : checkedComment;
+	/*_CrtMemCheckpoint(&m2);
+	_CrtMemDifference(&m3, &m1, &m2);*/
+	//printf("M3:\n");
+	/*_CrtMemDumpStatistics(&m3);
+	_CrtMemCheckpoint(&m1);*/
+	if (currCommand->command != NULL) {
+		//TODO: LEAKING MEMORY
+		currCommand->command = _strdup(checkedComment);
+	}
+	/*_CrtMemCheckpoint(&m2);
+	_CrtMemDifference(&m4, &m1, &m2);*/
+	//printf("M4:\n");
+	//_CrtMemDumpStatistics(&m4);
+	//printf("M5:\n");
+	//_CrtMemDifference(&m5, &m3, &m4);
+	//_CrtMemDumpStatistics(&m5);
 	free(temp);
-	//_CrtMemCheckpoint(&m2);
-	//_CrtMemDifference(&m3, &m1, &m2);
-	//_CrtMemDumpStatistics(&m3);
 	//gets the command type of the current command
 	currCommand = commandType(currCommand);
 	//returns the new command
@@ -181,27 +200,32 @@ command_t* updateCommand(command_t* currCommand, FILE* readFrom) {
 
 //returns the command type of the current command, A, C or L command 
 command_t* commandType(command_t* currCommand) {
-	size_t size;
+	size_t size = 0;
 	//gets the size of the command
-	size = strlen(currCommand->command);
-	int lastPlace = 1;
-	//looks for the null character in a string and updates the last place accordingly. 
-	if (currCommand->command[size - lastPlace] == '\n') {
-		lastPlace++;
+	if (currCommand->command != NULL) {
+		size = strlen(currCommand->command);
+		int lastPlace = 1;
+		//looks for the null character in a string and updates the last place accordingly. 
+		if (currCommand->command[size - lastPlace] == '\n') {
+			lastPlace++;
+		}
+		//Checks for L command
+		if (currCommand->command[0] == '(' && currCommand->command[size - lastPlace] == ')') {
+			currCommand->type = L;
+		}
+		//Checks for A command
+		else if (currCommand->command[0] == '@') {
+			currCommand->type = A;
+		}
+		//otherwise is C command
+		else {
+			currCommand->type = C;
+		}
+		return currCommand;
 	}
-	//Checks for L command
-	if (currCommand->command[0] == '(' && currCommand->command[size - lastPlace] == ')') {
-		currCommand->type = L;
-	}
-	//Checks for A command
-	else if (currCommand->command[0] == '@') {
-		currCommand->type = A;
-	}
-	//otherwise is C command
 	else {
-		currCommand->type = C;
+		return N;
 	}
-	return currCommand;
 }
 //checks if there are more commands in the file
 bool areThereMoreCommands(FILE* readFrom) {

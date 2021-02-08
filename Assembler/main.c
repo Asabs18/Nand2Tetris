@@ -52,8 +52,10 @@ int main(int argc, char** argv) {
 	FILE* outputFp = openOutputFile((char*)outputFileName);
 	pass = 2;
 	memAddress = 16;
+	free(currCommand->command);
 	while (true) {
 		advanceOutput = advancePass2(currCommand, fp);
+		//TODO: LEAKING MEMORY
 		currCommand->command = _strdup(advanceOutput->command->command);
 		if (areThereMoreCommands(fp) == false) {
 			break;

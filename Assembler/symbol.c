@@ -94,6 +94,7 @@ bool isStringValidSymbol(const char* string) {
 }
 //Creates an empty symbol
 symbol_p createSymbol(const char* key) {
+	//TODO: LEAKING MEMORY
 	symbol_t* symbol = malloc(sizeof(symbol_t));
 	assert(symbol);
 	symbol->key = key;

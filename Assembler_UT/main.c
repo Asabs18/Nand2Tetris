@@ -33,6 +33,6 @@ int main(int argc, char** argv) {
 	initialize_debugging();
 	//int* test = malloc(sizeof(int)); //FOR SOME REASON MEM LEAKS ONLY SHOW WHEN UNCOMMENTED
 	int output = munit_suite_main(&root_test_suite, NULL, argc, argv);
-	terminate_debugging(); //TODO: Fix memory leaks
+	terminate_debugging();
 	return output;
 }

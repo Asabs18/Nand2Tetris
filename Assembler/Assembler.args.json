@@ -3,6 +3,10 @@
   "Id": "5f9395d3-760c-41be-95e8-d486e7fd3f7c",
   "Items": [
     {
+      "Id": "00baf49d-8df2-40dc-8893-c382a73b346f",
+      "Command": "input/Pong/Pong.asm"
+    },
+    {
       "Id": "8a451ad2-d065-4d79-a567-82e486eba170",
       "Command": "input/Add/emptyFile.asm"
     },

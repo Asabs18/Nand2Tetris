@@ -6,7 +6,6 @@
 #define munit_ex_register_test(name, setup, tear_down, options, params) \
     { "/"#name, name, setup, tear_down, options, params }
 
-// TODO: w/examples, etc. Conventions:
 // - test names: _name__tests()
 // Name // Test Function // Setup Function // Tear-down Function // Options // Parameters
 #define munit_ex_register_suite(name, tests, sub_suites, iterations, options) \
