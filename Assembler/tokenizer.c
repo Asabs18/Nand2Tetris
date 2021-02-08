@@ -107,6 +107,7 @@ AR_t* advancePass1(command_t* currCommand, FILE* readFrom) {
 		//if the current line is a comment get the next line
 		assert(output != NULL);
 		assert(output->command != NULL);
+		// TODO: exception due to assert(output->command == 3)???
 		while (output->command->command == NULL || strcmp(output->command->command, "//skip") == 0 || strcmp(output->command->command, "\n") == 0) {
 			output->command = updateCommand(currCommand, readFrom);
 		}
