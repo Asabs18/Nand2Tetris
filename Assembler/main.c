@@ -41,26 +41,30 @@ int main(int argc, char** argv) {
 		currCommand->command = _strdup(advanceOutput->command->command);
 		memAddress += advanceOutput->addresses;
 		if (strcmp(currCommand->command, "//ENDOFFILE") == 0) {
+			free(currCommand->command);
 			break;
 		}
 		instruct = parse(currCommand, pass, symbTable, memAddress, jumpTable, compTable, destTable);
 		if (instruct.A != -2) {
 			memAddress++;
 		}
+		free(currCommand->command);
 	}
 	rewind(fp);
 	FILE* outputFp = openOutputFile((char*)outputFileName);
 	pass = 2;
 	memAddress = 16;
-	free(currCommand->command);
+	destroyAR_t(advanceOutput);
 	while (true) {
 		advanceOutput = advancePass2(currCommand, fp);
 		//TODO: LEAKING MEMORY
 		currCommand->command = _strdup(advanceOutput->command->command);
 		if (areThereMoreCommands(fp) == false) {
+			free(currCommand->command);
 			break;
 		}
 		if (currCommand->type == N) {
+			free(currCommand->command);
 			break;
 		}
 		instruct = parse(currCommand, pass, symbTable, memAddress, jumpTable, destTable, compTable);
@@ -70,6 +74,7 @@ int main(int argc, char** argv) {
 			memAddress++;
 		}
 		GenerateCode(&instruct, outputFp);
+		free(currCommand->command);
 	}
 	fclose(outputFp);
 	fclose(fp);
@@ -77,8 +82,8 @@ int main(int argc, char** argv) {
 	destroySymbolTable(jumpTable);
 	destroySymbolTable(destTable);
 	destroySymbolTable(symbTable);
-	destroyCommand(currCommand);
-	//free(currCommand);
+	//destroyCommand(currCommand);
+	free(currCommand);
 	//destroyAR_t(advanceOutput);
 	terminate_debugging();
 }

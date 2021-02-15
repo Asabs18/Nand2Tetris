@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <string.h>
 #include "munit.h"
 #include "tokenizer.h"
 #include "symbol.h"
@@ -73,7 +74,10 @@ char* checkComments(char* command, size_t size) {
 			}
 			//Otherwise set size to how far i got which is how much valid code there is on a line. (there is never a need for code after a comment on the same line)
 			else {
-				return stripComments(command, i);
+				char* temp = command;
+				command = _strdup(stripComments(command, i));
+				free(temp);
+				break;
 			}
 		}
 	}
@@ -86,7 +90,7 @@ char* stripWhiteSpace(char* command) {
 	int newCommandIndex = 0;
 	//loops through the command and if it finds whitespace, don't copy it into the buffer
 	for (size_t i = 0; i < strlen(command); i++) {
-		if (isspace(command[i]) != 0) {
+		if (command[i] != ' ' && command[i] != '\t' && command[i] != '\"') {
 			newCommand[newCommandIndex] = command[i];
 			newCommandIndex++;
 		}
@@ -101,22 +105,27 @@ char* stripWhiteSpace(char* command) {
 AR_t* advancePass1(command_t* currCommand, FILE* readFrom) {
 	AR_t* output = createAR_t();
 	output->addresses = 0;
+	output->command = NULL;
 	//runs until the return statement is hit in the loop
 	output->command = updateCommand(currCommand, readFrom);
 	while (true) {
 		//if the current line is a comment get the next line
 		assert(output != NULL);
 		assert(output->command != NULL);
-		// TODO: exception due to assert(output->command == 3)???
+		//output->command = updateCommand(currCommand, readFrom);
 		while (output->command->command == NULL || strcmp(output->command->command, "//skip") == 0 || strcmp(output->command->command, "\n") == 0) {
 			output->command = updateCommand(currCommand, readFrom);
+			if (areThereMoreCommands(readFrom) == false) {
+				output->command->command = "//ENDOFFILE";
+				break;
+			}
 		}
 		//if the command is an L command return it
-		if (output->command->type == L) {
+		if (output->command->type == L && output->command->type != N) {
 			return output;
 		}
 		//Otherwise get the next line
-		else {
+		else if (areThereMoreCommands(readFrom) == true) {
 			output->addresses++;
 			output->command = updateCommand(currCommand, readFrom);
 		}
@@ -132,22 +141,28 @@ AR_t* advancePass2(command_t* currCommand, FILE* readFrom) {
 	AR_t* output = createAR_t();
 	//output->command = malloc(sizeof(command_t));
 	output->addresses = 0;
+	output->command = NULL;
 	output->command = updateCommand(currCommand, readFrom);
 	while (true) {
 		//get the next line if the current line is a comment
 		assert(output != NULL);
 		assert(output->command != NULL);
-		while (output->command->command == NULL || strcmp(output->command->command, "//skip") == 0 || strcmp(output->command->command, "\n") == 0) {
+		//output->command = updateCommand(currCommand, readFrom);
+		while (output->command->command == NULL || strcmp(output->command->command, "//skip") == 0 || strcmp(output->command->command, "\n") == 0 || output->command->type == L) {
 			output->command = updateCommand(currCommand, readFrom);
+			if (areThereMoreCommands(readFrom) == false) {
+				output->command->command = "//ENDOFFILE";
+				break;
+			}
 		}
 		//return everything that is not an L command
-		if (output->command->type != L) {
+		if (output->command->type != L && output->command->type != N) {
 			return output;
 		}
 		//If the command is an L command get the next line
-		else {
+		/*else if (areThereMoreCommands(readFrom) == true) {
 			output->command = updateCommand(currCommand, readFrom);
-		}
+		}*/
 		if (areThereMoreCommands(readFrom) == false) {
 			output->command->type = N;
 			return output;
@@ -162,37 +177,19 @@ command_t* updateCommand(command_t* currCommand, FILE* readFrom) {
 	currCommand->command = stripWhiteSpace(currCommand->command);
 	//gets the length of the command
 	size_t cmdLen = strlen(currCommand->command);
-	//updates the line number
-	//copies the command into a command_t data structure
-	//if (currCommand->command != NULL) {
-	//	//free(currCommand->command);
-	//}
-	/*_CrtMemState m1;
-	_CrtMemState m2;
-	_CrtMemState m3;
-	_CrtMemState m4;
-	_CrtMemState m5;*/
-	//_CrtMemCheckpoint(&m1);
-	char* temp = currCommand->command;
 	char* checkedComment = checkComments(currCommand->command, cmdLen);
 	checkedComment = strcmp(checkedComment, "") == 0 ? NULL : checkedComment;
-	/*_CrtMemCheckpoint(&m2);
-	_CrtMemDifference(&m3, &m1, &m2);*/
-	//printf("M3:\n");
-	/*_CrtMemDumpStatistics(&m3);
-	_CrtMemCheckpoint(&m1);*/
-	if (currCommand->command != NULL) {
-		//TODO: LEAKING MEMORY
-		currCommand->command = _strdup(checkedComment);
-	}
-	/*_CrtMemCheckpoint(&m2);
-	_CrtMemDifference(&m4, &m1, &m2);*/
-	//printf("M4:\n");
-	//_CrtMemDumpStatistics(&m4);
-	//printf("M5:\n");
-	//_CrtMemDifference(&m5, &m3, &m4);
-	//_CrtMemDumpStatistics(&m5);
+	char* temp = currCommand->command;
+	currCommand->command = checkedComment != NULL ? _strdup(checkedComment) : NULL;
 	free(temp);
+	//if (checkedComment != NULL) {
+	//	//TODO: LEAKING MEMORY
+	//	currCommand->command = _strdup(checkedComment);
+	//	//free(temp);
+	//}
+	//else {
+	//	currCommand->command = NULL;
+	//}
 	//gets the command type of the current command
 	currCommand = commandType(currCommand);
 	//returns the new command
@@ -203,11 +200,11 @@ command_t* updateCommand(command_t* currCommand, FILE* readFrom) {
 command_t* commandType(command_t* currCommand) {
 	size_t size = 0;
 	//gets the size of the command
-	if (currCommand->command != NULL) {
+	if (currCommand->command != NULL && strcmp(currCommand->command, "\n") != 0) {
 		size = strlen(currCommand->command);
 		int lastPlace = 1;
 		//looks for the null character in a string and updates the last place accordingly. 
-		if (currCommand->command[size - lastPlace] == '\n') {
+		if (currCommand->command[size - lastPlace] == '\n' && size > 1) {
 			lastPlace++;
 		}
 		//Checks for L command
@@ -225,7 +222,9 @@ command_t* commandType(command_t* currCommand) {
 		return currCommand;
 	}
 	else {
-		return N;
+		currCommand->type = N;
+		currCommand->command = "//skip";
+		return currCommand;
 	}
 }
 //checks if there are more commands in the file
