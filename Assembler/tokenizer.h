@@ -21,3 +21,4 @@ char* stripWhiteSpace(char* command);
 char* checkComments(char* command, size_t size);
 //removes comments from a command
 char* stripComments(char* command, size_t i);
+bool resetAR_t(AR_t* advanceOutput);

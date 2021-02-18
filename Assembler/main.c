@@ -35,6 +35,7 @@ int main(int argc, char** argv) {
 	command_t* currCommand = (command_t*)malloc(sizeof(command_t));
 	int memAddress = 0;
 	while (areThereMoreCommands(fp)) {
+		resetAR_t(advanceOutput);
 		advanceOutput = advancePass1(currCommand, fp);
 		assert(advanceOutput != NULL);
 		assert(advanceOutput->command != NULL);
@@ -54,8 +55,10 @@ int main(int argc, char** argv) {
 	FILE* outputFp = openOutputFile((char*)outputFileName);
 	pass = 2;
 	memAddress = 16;
-	destroyAR_t(advanceOutput);
+	//resetAR_t(advanceOutput);
+	//destroyAR_t(advanceOutput);
 	while (true) {
+		resetAR_t(advanceOutput);
 		advanceOutput = advancePass2(currCommand, fp);
 		//TODO: LEAKING MEMORY
 		currCommand->command = _strdup(advanceOutput->command->command);
@@ -83,7 +86,7 @@ int main(int argc, char** argv) {
 	destroySymbolTable(destTable);
 	destroySymbolTable(symbTable);
 	//destroyCommand(currCommand);
-	free(currCommand);
-	//destroyAR_t(advanceOutput);
+	//free(currCommand);
+	destroyAR_t(advanceOutput);
 	terminate_debugging();
 }

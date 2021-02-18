@@ -15,12 +15,26 @@
 
 AR_t* createAR_t() {
 	//TODO: LEAKING MEMORY
-	return malloc(sizeof(AR_t));
+	return calloc(1, sizeof(AR_t));
 }
 
 void destroyAR_t(AR_t* advanceOutput) {
-	free(advanceOutput->command);
-	free(advanceOutput);
+	if (advanceOutput != NULL) {
+		free(advanceOutput->command);
+		free(advanceOutput);
+		//memset(advanceOutput, 0, sizeof(AR_t));
+	}
+}
+
+bool resetAR_t(AR_t* advanceOutput) {
+	if (advanceOutput != NULL) {
+		free(advanceOutput->command);
+		memset(advanceOutput, 0, sizeof(AR_t));
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
 FILE* openFile(const char* readFrom) {
@@ -140,8 +154,8 @@ AR_t* advancePass1(command_t* currCommand, FILE* readFrom) {
 AR_t* advancePass2(command_t* currCommand, FILE* readFrom) {
 	AR_t* output = createAR_t();
 	//output->command = malloc(sizeof(command_t));
-	output->addresses = 0;
-	output->command = NULL;
+	//output->addresses = 0;
+	//output->command = NULL;
 	output->command = updateCommand(currCommand, readFrom);
 	while (true) {
 		//get the next line if the current line is a comment
@@ -182,15 +196,6 @@ command_t* updateCommand(command_t* currCommand, FILE* readFrom) {
 	char* temp = currCommand->command;
 	currCommand->command = checkedComment != NULL ? _strdup(checkedComment) : NULL;
 	free(temp);
-	//if (checkedComment != NULL) {
-	//	//TODO: LEAKING MEMORY
-	//	currCommand->command = _strdup(checkedComment);
-	//	//free(temp);
-	//}
-	//else {
-	//	currCommand->command = NULL;
-	//}
-	//gets the command type of the current command
 	currCommand = commandType(currCommand);
 	//returns the new command
 	return currCommand;
