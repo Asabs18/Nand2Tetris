@@ -91,11 +91,11 @@ char* checkComments(char* command, size_t size) {
 				char* temp = command;
 				command = _strdup(stripComments(command, i));
 				free(temp);
-				break;
+				return command; //break; //HACK: try and clean up returns and calls in checkComments
 			}
 		}
 	}
-	return command;
+	return _strdup(command);
 }
 
 char* stripWhiteSpace(char* command) {

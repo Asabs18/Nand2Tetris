@@ -51,10 +51,13 @@ int main(int argc, char** argv) {
 		}
 		free(currCommand->command);
 	}
+	currCommand->command = NULL;
+	currCommand->type = N;
 	rewind(fp);
 	FILE* outputFp = openOutputFile((char*)outputFileName);
 	pass = 2;
 	memAddress = 16;
+	//TODO: add debugging func for pass 1 and return report
 	//resetAR_t(advanceOutput);
 	//destroyAR_t(advanceOutput);
 	while (true) {
@@ -66,7 +69,7 @@ int main(int argc, char** argv) {
 			free(currCommand->command);
 			break;
 		}
-		if (currCommand->type == N) {
+		if (currCommand->type == N) { //HACK: add to if on line 66
 			free(currCommand->command);
 			break;
 		}
@@ -77,7 +80,7 @@ int main(int argc, char** argv) {
 			memAddress++;
 		}
 		GenerateCode(&instruct, outputFp);
-		free(currCommand->command);
+		free(currCommand->command);//HACK: move free out of loop
 	}
 	fclose(outputFp);
 	fclose(fp);
