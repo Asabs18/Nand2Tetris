@@ -1,0 +1,18 @@
+{
+  "FileVersion": 2,
+  "Id": "5f9395d3-760c-41be-95e8-d486e7fd3f7c",
+  "Items": [
+    {
+      "Id": "4b8c0170-1f56-4639-a73b-6735a825ae5f",
+      "Command": "input/Pong/Pong.asm"
+    },
+    {
+      "Id": "8a451ad2-d065-4d79-a567-82e486eba170",
+      "Command": "input/Add/emptyFile.asm"
+    },
+    {
+      "Id": "f23cd00a-8deb-45ea-80d8-5119fb51d52c",
+      "Command": "input/Add/Add.asm"
+    }
+  ]
+}
