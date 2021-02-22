@@ -79,5 +79,5 @@ int main(int argc, char** argv) {
 	destroySymbolTable(jumpTable);
 	destroySymbolTable(destTable);
 	destroySymbolTable(symbTable);
-	//NOTE: This program does contain multiple memory leaks
+	//NOTE: This program does contain multiple memory leaks VERSION WITH LESS LEAKS ON GITHUB
 }
