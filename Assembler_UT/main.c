@@ -14,10 +14,11 @@ const MunitSuite Parse_C_test_suite[] = {
 	{ NULL }
 };
 
-//The ACL test suite calls the assembleCheck Tests
+//The Assembler test suite calls each of the following test suites under the unit test folder
 const MunitSuite Assembler_test_suite[] = {
 	{ munit_ex_register_sub_suite(symbolTable , NULL) },
 	{ munit_ex_register_sub_suite(tokenCheck, NULL) },
+	//Calls 2 separate test suits both under the parseCheck hierarchy - uses different macro than other - see munit_ex.main
 	{ munit_ex_register_full_sub_suite_easy(parseCheck, parseCheck_tests, Parse_C_test_suite, 1) },
 	{ munit_ex_register_sub_suite(codeGenCheck, NULL) },
 	{ NULL }
