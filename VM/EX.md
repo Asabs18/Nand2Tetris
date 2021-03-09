@@ -2,6 +2,8 @@
 
 ## push x y:
 ``` c
+@y
+D = A
 ```
   
 ## pop x y:
