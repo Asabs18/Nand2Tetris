@@ -57,3 +57,6 @@
 
 ### Close:
 - Closes the output file
+
+## Description of parser:
+- The parent parser will have multiple factory functions that pass a command around and if one of these functions relize that the command passed to them is valid, create a certain object for the needed parser. 
