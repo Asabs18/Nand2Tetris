@@ -13,34 +13,48 @@
 - Makes the Current Command the next command in the stream, only called if hasMoreCommands is True. Initally there is no current Command
 
 #### commandType:
-- Returns which class the currentCommand is
-
-#### arg1:
-- Returns the first argument of the current command. In the case of C_ARITHMETIC, the command itself is returned, This function is not called if the command is C_RETURN
+- Returns a class that is the currentCommands correct type. (Has factory functions for each command type)
 
 ### Parser C_ARITHMETIC:
-
+#### arg1:
+- Returns itself
 ### Parser C_PUSH:
+#### arg1:
+- Returns The first argument of the command
 #### arg2:
 - Returns the second argument of the current command. Should be called only if the current command is C_PUSH, C_POP, C_FUNCTION, or C_CALL
 
 ### Parser C_POP:
+#### arg1:
+- Returns The first argument of the command
 #### arg2:
 - Returns the second argument of the current command. Should be called only if the current command is C_PUSH, C_POP, C_FUNCTION, or C_CALL
 
 ### Parser C_LABEL:
+#### arg1:
+- Returns The first argument of the command
 
 ### Parser C_GOTO:
+#### arg1:
+- Returns The first argument of the command
 
 ### Parser C_IF:
+#### arg1:
+- Returns The first argument of the command
 
 ### Parser C_FUNCTION:
+#### arg1:
+- Returns The first argument of the command
 #### arg2:
 - Returns the second argument of the current command. Should be called only if the current command is C_PUSH, C_POP, C_FUNCTION, or C_CALL
 
 ### Parser C_RETURN:
+#### arg1:
+- Returns The first argument of the command
 
 ### Parser C_CALL:
+#### arg1:
+- Returns The first argument of the command
 #### arg2:
 - Returns the second argument of the current command. Should be called only if the current command is C_PUSH, C_POP, C_FUNCTION, or C_CALL
 
