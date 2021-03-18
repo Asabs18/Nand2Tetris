@@ -9,11 +9,8 @@
 #### hasMoreCommands:
 - Checks if there are more inputs in the .vm file stream opened by Constructor
 
-#### advance:
-- Makes the Current Command the next command in the stream, only called if hasMoreCommands is True. Initally there is no current Command
-
 #### commandType:
-- Returns a class that is the currentCommands correct type. (Has factory functions for each command type)
+- Returns a class that is the currentCommands correct type. (Has factory functions for each command type) Creates The correct object
 
 ### Parser C_ARITHMETIC:
 #### arg1:
