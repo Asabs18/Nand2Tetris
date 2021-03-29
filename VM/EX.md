@@ -1,11 +1,13 @@
 # VM to ASM translations:
 
 ## push:
-@SP\n
+```c
+@SP
 A=M
 M=D
 @SP
 M=M+1
+```
 
 ## Pop:
 @R13
