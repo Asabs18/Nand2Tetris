@@ -1,7 +1,7 @@
 # VM to ASM translations:
 
 ## push:
-@SP
+@SP\n
 A=M
 M=D
 @SP
