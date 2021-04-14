@@ -1,0 +1,98 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2
+					],
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "CmakeTest",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "CmakeTest",
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"build" : "GrammarSpike",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "GrammarSpike",
+					"targetIndexes" : 
+					[
+						1
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1,
+						2
+					],
+					"name" : "Nand2Tetris",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 1,
+					"id" : "CmakeTest::@4a6d7237fac926ac294c",
+					"jsonFile" : "target-CmakeTest-Debug-086ab99724127291daae.json",
+					"name" : "CmakeTest",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "GrammarSpike::@b5162f10ee7f1ea0f0f4",
+					"jsonFile" : "target-GrammarSpike-Debug-3ede0fcd1fdc74140f7c.json",
+					"name" : "GrammarSpike",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/aidan/source/repos/Nand2Tetris/out/build/x64-Debug (default)",
+		"source" : "C:/Users/aidan/source/repos/Nand2Tetris"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 1
+	}
+}

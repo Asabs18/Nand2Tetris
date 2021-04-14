@@ -1,0 +1,7 @@
+# ninja log v5
+0	456	639343865	CmakeTest/CMakeFiles/CmakeTest.dir/CmakeTest.cpp.obj	4c724f73d3254b2f
+456	648	639343866	CmakeTest/CmakeTest.exe	9e1ccbcbdca8f94c
+1	421	639345630	GrammarSpike/CMakeFiles/GrammarSpike.dir/C_/Users/aidan/source/repos/libparsing/src/c/gc.c.obj	43dc7142f67c443d
+8	421	639345630	GrammarSpike/CMakeFiles/GrammarSpike.dir/GrammarSpike.cpp.obj	b529bbdb035dafde
+0	74	639345788	GrammarSpike/CMakeFiles/GrammarSpike.dir/C_/Users/aidan/source/repos/libparsing/src/c/parsing.c.obj	2888ce7bb939f7a0
+0	67	639346239	GrammarSpike/CMakeFiles/GrammarSpike.dir/C_/Users/aidan/source/repos/libparsing/src/c/parsing.c.obj	2888ce7bb939f7a0

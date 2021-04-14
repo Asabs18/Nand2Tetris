@@ -1,0 +1,8 @@
+C:/Users/aidan/source/repos/Nand2Tetris/out/build/x64-Debug (default)/CMakeFiles/edit_cache.dir
+C:/Users/aidan/source/repos/Nand2Tetris/out/build/x64-Debug (default)/CMakeFiles/rebuild_cache.dir
+C:/Users/aidan/source/repos/Nand2Tetris/out/build/x64-Debug (default)/CmakeTest/CMakeFiles/CmakeTest.dir
+C:/Users/aidan/source/repos/Nand2Tetris/out/build/x64-Debug (default)/CmakeTest/CMakeFiles/edit_cache.dir
+C:/Users/aidan/source/repos/Nand2Tetris/out/build/x64-Debug (default)/CmakeTest/CMakeFiles/rebuild_cache.dir
+C:/Users/aidan/source/repos/Nand2Tetris/out/build/x64-Debug (default)/GrammarSpike/CMakeFiles/edit_cache.dir
+C:/Users/aidan/source/repos/Nand2Tetris/out/build/x64-Debug (default)/GrammarSpike/CMakeFiles/GrammarSpike.dir
+C:/Users/aidan/source/repos/Nand2Tetris/out/build/x64-Debug (default)/GrammarSpike/CMakeFiles/rebuild_cache.dir
