@@ -1,0 +1,52 @@
+static munitresult
+parser(const munitparameter params[], void* data) {
+	//Arrange
+	 std::stringstream file("push pop sub add function fn sub 10 15");
+	 parser_t parser = new parser_t(file);
+	 
+	 //Act
+	 instruction_t instruction = parser->parse();
+
+	//Assert
+	MUNIT_ASSERT(instruction = validInstruction);
+}
+
+static munitresult
+tokenizer(const munitparameter params[], void* data) {
+	//Arrange
+	 std::stringstream file("push pop sub add function fn sub 10 15");
+	 tokenizer_t tokenizer = new tokenizer_t(file);
+	 
+	 //Act
+	 token_t token = tokenizer->tokenize();
+
+	//Assert
+	MUNIT_ASSERT(instruction = validInstruction);
+}
+
+token_t tokeizer_t::tokenize(){
+	std::string word = readNextWord(this->_stream);
+	if(is_op_code){
+		auto it = look_up_token;
+		tokens_t t = it->second;
+		token_t token = new token_t(t);
+	}
+	else if (is_num){
+		auto it = look_up_token;
+		tokens_t t = it->second;
+		token_t token = new token_t(t);
+	}
+	else{
+		if(is_function_name){
+			auto it = look_up_token;
+			tokens_t t = it->second;
+			token_t token = new token_t(t);
+		}
+		else{is_label){
+			auto it = look_up_token;
+			tokens_t t = it->second;
+			token_t token = new token_t(t);
+		}
+	}
+	return token;
+}
